@@ -21,7 +21,10 @@ private:
 
 private slots:
         void paintField();
+<<<<<<< HEAD
         void resetFields();
+=======
+>>>>>>> StableGame
 };
 
 

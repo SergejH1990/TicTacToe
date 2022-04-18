@@ -37,6 +37,15 @@ void TTTGame::resetFields(){
 
 }
 
+
+void TTTGame::paintField(){
+    QPushButton *button=(QPushButton*)sender();
+
+    button->setText("X");
+
+
+}
+
 TTTGame::~TTTGame()
 {
     delete ui;
