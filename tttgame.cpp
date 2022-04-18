@@ -18,6 +18,15 @@ TTTGame::TTTGame(QWidget *parent)
      connect(ui->pushButton_9,SIGNAL(released()),this,SLOT(paintField()));
 }
 
+
+void TTTGame::paintField(){
+    QPushButton *button=(QPushButton*)sender();
+
+    button->setText("X");
+
+
+}
+
 TTTGame::~TTTGame()
 {
     delete ui;
