@@ -17,5 +17,14 @@ public:
 
 private:
     Ui::TTTGame *ui;
+
+
+private slots:
+        void paintField();
+        void resetFields();
 };
+
+
+
+
 #endif // TTTGAME_H

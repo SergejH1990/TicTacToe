@@ -16,6 +16,25 @@ TTTGame::TTTGame(QWidget *parent)
      connect(ui->pushButton_7,SIGNAL(released()),this,SLOT(paintField()));
      connect(ui->pushButton_8,SIGNAL(released()),this,SLOT(paintField()));
      connect(ui->pushButton_9,SIGNAL(released()),this,SLOT(paintField()));
+
+     connect(ui->buttonReset,SIGNAL(released()),this,SLOT(resetFields()));
+}
+
+
+void TTTGame::paintField(){
+    QPushButton *button=(QPushButton*)sender();
+
+    button->setText("X");
+
+
+}
+
+void TTTGame::resetFields(){
+
+    for(int i=1;i<=9;i++){
+       ui->pushButton_1->setText(QString::number(i,'g',0));
+    }
+
 }
 
 TTTGame::~TTTGame()
