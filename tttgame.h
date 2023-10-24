@@ -2,29 +2,41 @@
 #define TTTGAME_H
 
 #include <QWidget>
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class TTTGame; }
-QT_END_NAMESPACE
+#include <QPropertyAnimation>
 
 class TTTGame : public QWidget
 {
     Q_OBJECT
-
 public:
     TTTGame(QWidget *parent = nullptr);
     ~TTTGame();
 
+    void paintField();
+    void resetFields();
+    void animateButton();
+
+protected:
+    class QPushButton* topLeftButton;
+    class QPushButton* topMIddleButton;
+    class QPushButton* topRightButton;
+    class QPushButton* centerLeftButton;
+    class QPushButton* centerMiddleButton;
+    class QPushButton* centerRightButton;
+    class QPushButton* bottomLeftButton;
+    class QPushButton* bottomMiddleButton;
+    class QPushButton* bottomRightBUtton;
+
+    class QPushButton* startButton;
+    class QPushButton* resetButton;
+    class QPushButton* XButton;
+    class QPushButton* OButton;
+
+    class QGridLayout* gameLayout;
+    class QHBoxLayout* mainLayout;
+
 private:
-    Ui::TTTGame *ui;
+    using super = QWidget;
 
-
-private slots:
-        void paintField();
-<<<<<<< HEAD
-        void resetFields();
-=======
->>>>>>> StableGame
 };
 
 
