@@ -1,47 +1,36 @@
 #ifndef TTTGAME_H
 #define TTTGAME_H
 
+#include <array>
+
 #include <QWidget>
 
 class TTTGame : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 public:
-    explicit TTTGame(QWidget *parent = nullptr);
-    virtual ~TTTGame();
-
-    void paintField();
-    void resetFields();
-    void animateButton();
+	explicit TTTGame(QWidget *parent = nullptr);
+	virtual ~TTTGame();
 
 protected:
-    class QPushButton* topLeftButton;
-    class QPushButton* topMiddleButton;
-    class QPushButton* topRightButton;
-    class QPushButton* centerLeftButton;
-    class QPushButton* centerMiddleButton;
-    class QPushButton* centerRightButton;
-    class QPushButton* bottomLeftButton;
-    class QPushButton* bottomMiddleButton;
-    class QPushButton* bottomRightBUtton;
+	void placeSymbolOnButton();
+	void resetFields();
 
-    class QLabel* winnerLabel;
-    class QLabel* playerTurnLabel;
+	class QLabel* winnerLabel;
+	class QLabel* playerTurnLabel;
+	class QLabel* scoreLabel;
 
-    class QPushButton* startButton;
-    class QPushButton* resetButton;
-    class QPushButton* XButton;
-    class QPushButton* OButton;
+	class QPushButton* startButton;
+	class QPushButton* resetButton;
 
-    class QGridLayout* gameLayout;
-    class QVBoxLayout* mainLayout;
+	class QGridLayout* gameLayout;
+	class QVBoxLayout* mainLayout;
+
+	std::array<class QPushButton*, 9> gameButtons;
+	bool isXTurn;
 
 private:
-    using super = QWidget;
-
+	using super = QWidget;
 };
-
-
-
 
 #endif // TTTGAME_H

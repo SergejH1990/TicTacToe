@@ -47,7 +47,7 @@ else()
 endif()
 
 target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_include_directories(TicTacToe PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Resources)
+target_include_directories(TicTacToe PRIVATE Resources)
 
 set_target_properties(TicTacToe PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
