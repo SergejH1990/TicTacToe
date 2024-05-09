@@ -8,7 +8,7 @@
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
 topLeftButton(nullptr),
-topMIddleButton(nullptr),
+topMiddleButton(nullptr),
 topRightButton(nullptr),
 centerLeftButton(nullptr),
 centerMiddleButton(nullptr),
@@ -47,9 +47,9 @@ mainLayout(nullptr)
         topLeftButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         connect(topLeftButton, &QPushButton::clicked, this, &TTTGame::animateButton);
 
-        topMIddleButton = new QPushButton(this);
-        topMIddleButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        connect(topMIddleButton, &QPushButton::clicked, this, &TTTGame::animateButton);
+        topMiddleButton = new QPushButton(this);
+        topMiddleButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        connect(topMiddleButton, &QPushButton::clicked, this, &TTTGame::animateButton);
 
         topRightButton = new QPushButton(this);
         topRightButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -80,7 +80,7 @@ mainLayout(nullptr)
         connect(bottomRightBUtton, &QPushButton::clicked, this, &TTTGame::animateButton);
 
         gameLayout->addWidget(topLeftButton, 0, 0);
-        gameLayout->addWidget(topMIddleButton, 0, 1);
+        gameLayout->addWidget(topMiddleButton, 0, 1);
         gameLayout->addWidget(topRightButton, 0 , 2);
         gameLayout->addWidget(centerLeftButton, 1, 0);
         gameLayout->addWidget(centerMiddleButton, 1, 1);

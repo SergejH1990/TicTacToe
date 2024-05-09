@@ -8,8 +8,8 @@ class TTTGame : public QWidget
 {
     Q_OBJECT
 public:
-    TTTGame(QWidget *parent = nullptr);
-    ~TTTGame();
+    explicit TTTGame(QWidget *parent = nullptr);
+    virtual ~TTTGame();
 
     void paintField();
     void resetFields();
@@ -17,7 +17,7 @@ public:
 
 protected:
     class QPushButton* topLeftButton;
-    class QPushButton* topMIddleButton;
+    class QPushButton* topMiddleButton;
     class QPushButton* topRightButton;
     class QPushButton* centerLeftButton;
     class QPushButton* centerMiddleButton;

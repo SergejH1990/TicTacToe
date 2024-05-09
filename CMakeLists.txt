@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
         tttgame.cpp
         tttgame.h
         tttgame.ui
+        Resources/style.qss
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
