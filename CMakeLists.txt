@@ -19,7 +19,6 @@ set(PROJECT_SOURCES
         tttgame.cpp
         tttgame.h
 	TicTacToeGeneral.h
-        tttgame.ui
 	Resources/style.qss
 	Resources/MyResources.qrc
 )
