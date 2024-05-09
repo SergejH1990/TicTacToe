@@ -2,7 +2,6 @@
 #define TTTGAME_H
 
 #include <QWidget>
-#include <QPropertyAnimation>
 
 class TTTGame : public QWidget
 {
@@ -26,13 +25,16 @@ protected:
     class QPushButton* bottomMiddleButton;
     class QPushButton* bottomRightBUtton;
 
+    class QLabel* winnerLabel;
+    class QLabel* playerTurnLabel;
+
     class QPushButton* startButton;
     class QPushButton* resetButton;
     class QPushButton* XButton;
     class QPushButton* OButton;
 
     class QGridLayout* gameLayout;
-    class QHBoxLayout* mainLayout;
+    class QVBoxLayout* mainLayout;
 
 private:
     using super = QWidget;

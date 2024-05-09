@@ -1,8 +1,11 @@
 
 #include <QPushButton>
 #include <QPropertyAnimation>
+#include <QLabel>
 #include <QHBoxLayout>
 #include <QGridLayout>
+
+#include "TicTacToeGeneral.h"
 
 #include "tttgame.h"
 
@@ -16,29 +19,15 @@ centerRightButton(nullptr),
 bottomLeftButton(nullptr),
 bottomMiddleButton(nullptr),
 bottomRightBUtton(nullptr),
+winnerLabel(nullptr),
+playerTurnLabel(nullptr),
 startButton(nullptr),
 resetButton(nullptr),
 gameLayout(nullptr),
 mainLayout(nullptr)
 {
-    mainLayout = new QHBoxLayout(this);
-    setFixedSize(600, 400);
-
-    {
-        QVBoxLayout* menuLayout = new QVBoxLayout;
-
-        startButton = new QPushButton(this);
-        startButton->setText("Start");
-        connect(startButton, &QPushButton::clicked, [](){});
-
-        resetButton = new QPushButton(this);
-        resetButton->setText("Reset");
-        connect(resetButton, &QPushButton::clicked, this, &TTTGame::resetFields);
-
-        menuLayout->addWidget(startButton);
-        menuLayout->addWidget(resetButton);
-        mainLayout->addLayout(menuLayout);
-    }
+    mainLayout = new QVBoxLayout(this);
+    setFixedSize(1000, 600);
 
     {
         gameLayout = new QGridLayout;
@@ -88,7 +77,40 @@ mainLayout(nullptr)
         gameLayout->addWidget(bottomLeftButton, 2, 0);
         gameLayout->addWidget(bottomMiddleButton, 2, 1);
         gameLayout->addWidget(bottomRightBUtton, 2, 2);
-        mainLayout->addLayout(gameLayout);
+        mainLayout->addLayout(gameLayout, 2);
+    }
+
+    {
+        QVBoxLayout* const menuLayout = new QVBoxLayout;
+
+        winnerLabel = new QLabel(this);
+        winnerLabel->setText("No Winner");
+        winnerLabel->setAlignment(Qt::AlignCenter);
+        winnerLabel->setFont(General::gAppFont);
+        menuLayout->addWidget(winnerLabel);
+
+        playerTurnLabel = new QLabel(this);
+        playerTurnLabel->setText("Turn of O");
+        playerTurnLabel->setAlignment(Qt::AlignCenter);
+        playerTurnLabel->setFont(General::gAppFont);
+        menuLayout->addWidget(playerTurnLabel);
+
+        QHBoxLayout* const gameMenuLayout = new QHBoxLayout;
+        menuLayout->addLayout(gameMenuLayout);
+
+        startButton = new QPushButton(this);
+        startButton->setText("Start");
+        startButton->setFont(General::gAppFont);
+        connect(startButton, &QPushButton::clicked, [](){});
+
+        resetButton = new QPushButton(this);
+        resetButton->setText("Reset");
+        resetButton->setFont(General::gAppFont);
+        connect(resetButton, &QPushButton::clicked, this, &TTTGame::resetFields);
+
+        gameMenuLayout->addWidget(startButton);
+        gameMenuLayout->addWidget(resetButton);
+        mainLayout->addLayout(menuLayout, 1);
     }
 }
 

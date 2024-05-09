@@ -18,8 +18,10 @@ set(PROJECT_SOURCES
         main.cpp
         tttgame.cpp
         tttgame.h
+	TicTacToeGeneral.h
         tttgame.ui
-        Resources/style.qss
+	Resources/style.qss
+	Resources/MyResources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -46,6 +48,7 @@ else()
 endif()
 
 target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_include_directories(TicTacToe PRIVATE ${CMAKE_CURRENT_LIST_DIR}/Resources)
 
 set_target_properties(TicTacToe PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
