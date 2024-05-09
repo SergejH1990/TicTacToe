@@ -10,10 +10,13 @@
 
 #include "tttgame.h"
 
-static const QSize kTTTGameWindowSize(1000, 800);
+constexpr QSize kTTTGameWindowSize(1000, 800);
+static const QString kTTTGameStartTurnString("Game did not start yet");
+static const QString kTTTGameXPlayerTurnString("It's X Turn");
+static const QString kTTTGameOPlayerTurnString("It's O Turn");
+static QString TTTGameFormatScoreString("X  %1 : %2  O");
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
-winnerLabel(nullptr),
 playerTurnLabel(nullptr),
 scoreLabel(nullptr),
 startButton(nullptr),
@@ -21,6 +24,9 @@ resetButton(nullptr),
 gameLayout(nullptr),
 mainLayout(nullptr),
 gameButtons(),
+xWins(0),
+oWins(0),
+isGameInProgress(false),
 isXTurn(false)
 {
 	mainLayout = new QVBoxLayout(this);
@@ -32,11 +38,11 @@ isXTurn(false)
 
 		for (int index = 0; index < (int)gameButtons.size(); index++)
 		{
-			QPushButton* gameButton = gameButtons[index];
-			gameButton = new QPushButton(this);
+			QPushButton* const gameButton = new QPushButton(this);
 			gameButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-			connect(gameButton, &QPushButton::clicked, this, &TTTGame::placeSymbolOnButton);
+			connect(gameButton, &QPushButton::clicked, this, &TTTGame::OnGameButtonPressed);
 
+			gameButtons[index] = gameButton;
 			gameLayout->addWidget(gameButton, index / 3, index % 3);
 		}
 
@@ -48,17 +54,12 @@ isXTurn(false)
 		QVBoxLayout* const menuLayout = new QVBoxLayout;
 
 		scoreLabel = new QLabel(this);
-		scoreLabel->setText("0 : 0");
+		scoreLabel->setText(TTTGameFormatScoreString.arg(xWins).arg(oWins));
 		scoreLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(scoreLabel);
 
-		winnerLabel = new QLabel(this);
-		winnerLabel->setText("No Winner");
-		winnerLabel->setAlignment(Qt::AlignCenter);
-		menuLayout->addWidget(winnerLabel);
-
 		playerTurnLabel = new QLabel(this);
-		playerTurnLabel->setText("Game did not start yet");
+		playerTurnLabel->setText(kTTTGameStartTurnString);
 		playerTurnLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(playerTurnLabel);
 
@@ -67,11 +68,11 @@ isXTurn(false)
 
 		startButton = new QPushButton(this);
 		startButton->setText("Start");
-		connect(startButton, &QPushButton::clicked, [](){});
+		connect(startButton, &QPushButton::clicked, this, &TTTGame::OnStartGamePressed);
 
 		resetButton = new QPushButton(this);
 		resetButton->setText("Reset");
-		connect(resetButton, &QPushButton::clicked, this, &TTTGame::resetFields);
+		connect(resetButton, &QPushButton::clicked, this, &TTTGame::OnResetButtonPressed);
 
 		gameMenuLayout->addWidget(startButton);
 		gameMenuLayout->addWidget(resetButton);
@@ -84,23 +85,53 @@ TTTGame::~TTTGame()
 
 }
 
-void TTTGame::placeSymbolOnButton()
+void TTTGame::OnGameButtonPressed()
 {
+	if (!isGameInProgress)
+		return;
+
 	QPushButton* const gameButton = qobject_cast<QPushButton*>(sender());
-	if (gameButton == nullptr)
+	if (gameButton == nullptr || gameButton->text() != General::gEmptyString)
 		return;
 
 	if (isXTurn)
 	{
 		gameButton->setText("X");
 		isXTurn = !isXTurn;
+		playerTurnLabel->setText(kTTTGameOPlayerTurnString);
 		return;
 	}
 
 	gameButton->setText("O");
 	isXTurn = !isXTurn;
+	playerTurnLabel->setText(kTTTGameXPlayerTurnString);
 }
 
-void TTTGame::resetFields()
+void TTTGame::OnStartGamePressed()
 {
+	if (isGameInProgress)
+		return;
+
+	isGameInProgress = true;
+	isXTurn = true;
+
+	playerTurnLabel->setText(kTTTGameXPlayerTurnString);
+}
+
+void TTTGame::OnResetButtonPressed()
+{
+	for (QPushButton* const gameButton : gameButtons)
+	{
+		if (gameButton == nullptr)
+			continue;
+
+		gameButton->setText(General::gEmptyString);
+	}
+
+	isXTurn = false;
+	isGameInProgress = false;
+	xWins = 0;
+	oWins = 0;
+	scoreLabel->setText(TTTGameFormatScoreString.arg(xWins).arg(oWins));
+	playerTurnLabel->setText(kTTTGameStartTurnString);
 }

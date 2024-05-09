@@ -13,10 +13,10 @@ public:
 	virtual ~TTTGame();
 
 protected:
-	void placeSymbolOnButton();
-	void resetFields();
+	void OnGameButtonPressed();
+	void OnStartGamePressed();
+	void OnResetButtonPressed();
 
-	class QLabel* winnerLabel;
 	class QLabel* playerTurnLabel;
 	class QLabel* scoreLabel;
 
@@ -27,6 +27,10 @@ protected:
 	class QVBoxLayout* mainLayout;
 
 	std::array<class QPushButton*, 9> gameButtons;
+
+	int xWins;
+	int oWins;
+	bool isGameInProgress;
 	bool isXTurn;
 
 private:
