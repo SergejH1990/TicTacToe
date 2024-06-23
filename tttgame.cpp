@@ -1,7 +1,5 @@
 
-#include <QSize>
 #include <QPushButton>
-#include <QPropertyAnimation>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QGridLayout>
@@ -9,12 +7,6 @@
 #include "TicTacToeGeneral.h"
 
 #include "tttgame.h"
-
-constexpr QSize kTTTGameWindowSize(1000, 800);
-static const QString kTTTGameStartTurnString("Game did not start yet");
-static const QString kTTTGameXPlayerTurnString("It's X Turn");
-static const QString kTTTGameOPlayerTurnString("It's O Turn");
-static QString TTTGameFormatScoreString("X  %1 : %2  O");
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
 playerTurnLabel(nullptr),
@@ -26,11 +18,12 @@ mainLayout(nullptr),
 gameButtons(),
 xWins(0),
 oWins(0),
+turns(0),
 isGameInProgress(false),
 isXTurn(false)
 {
 	mainLayout = new QVBoxLayout(this);
-	setFixedSize(kTTTGameWindowSize);
+	setFixedSize(General::gWindowSize);
 
 	// Initialize game buttons
 	{
@@ -43,7 +36,7 @@ isXTurn(false)
 			connect(gameButton, &QPushButton::clicked, this, &TTTGame::OnGameButtonPressed);
 
 			gameButtons[index] = gameButton;
-			gameLayout->addWidget(gameButton, index / 3, index % 3);
+			gameLayout->addWidget(gameButton, index / General::gEdgeSize, index % General::gEdgeSize);
 		}
 
 		mainLayout->addLayout(gameLayout, 2);
@@ -54,12 +47,12 @@ isXTurn(false)
 		QVBoxLayout* const menuLayout = new QVBoxLayout;
 
 		scoreLabel = new QLabel(this);
-		scoreLabel->setText(TTTGameFormatScoreString.arg(xWins).arg(oWins));
+		scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
 		scoreLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(scoreLabel);
 
 		playerTurnLabel = new QLabel(this);
-		playerTurnLabel->setText(kTTTGameStartTurnString);
+		playerTurnLabel->setText(General::gStartGameString);
 		playerTurnLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(playerTurnLabel);
 
@@ -94,17 +87,38 @@ void TTTGame::OnGameButtonPressed()
 	if (gameButton == nullptr || gameButton->text() != General::gEmptyString)
 		return;
 
+	turns++;
+
 	if (isXTurn)
 	{
-		gameButton->setText("X");
+		gameButton->setText(General::gXPlayerString);
+		const bool didXWin = IsWinner(*gameButton);
+		if (didXWin || turns == 9)
+		{
+			if (didXWin)
+			{
+				xWins++;
+			}
+			ResetButtons();
+		}
+
+		playerTurnLabel->setText(General::gOPlayerTurnString);
 		isXTurn = !isXTurn;
-		playerTurnLabel->setText(kTTTGameOPlayerTurnString);
 		return;
 	}
 
-	gameButton->setText("O");
+	gameButton->setText(General::gOPlayerString);
+	const bool didOWin = IsWinner(*gameButton);
+	if (didOWin || turns == 9)
+	{
+		if (didOWin)
+		{
+			oWins++;
+		}
+		ResetButtons();
+	}
 	isXTurn = !isXTurn;
-	playerTurnLabel->setText(kTTTGameXPlayerTurnString);
+	playerTurnLabel->setText(General::gXPlayerTurnString);
 }
 
 void TTTGame::OnStartGamePressed()
@@ -115,10 +129,21 @@ void TTTGame::OnStartGamePressed()
 	isGameInProgress = true;
 	isXTurn = true;
 
-	playerTurnLabel->setText(kTTTGameXPlayerTurnString);
+	playerTurnLabel->setText(General::gXPlayerTurnString);
 }
 
 void TTTGame::OnResetButtonPressed()
+{
+	xWins = 0;
+	oWins = 0;
+
+	ResetButtons();
+
+	isGameInProgress = false;
+	playerTurnLabel->setText(General::gStartGameString);
+}
+
+void TTTGame::ResetButtons()
 {
 	for (QPushButton* const gameButton : gameButtons)
 	{
@@ -129,9 +154,58 @@ void TTTGame::OnResetButtonPressed()
 	}
 
 	isXTurn = false;
-	isGameInProgress = false;
-	xWins = 0;
-	oWins = 0;
-	scoreLabel->setText(TTTGameFormatScoreString.arg(xWins).arg(oWins));
-	playerTurnLabel->setText(kTTTGameStartTurnString);
+	turns = 0;
+
+	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
+}
+
+bool TTTGame::IsWinner(const QPushButton& checkedPushButton)
+{
+	if (checkedPushButton.text().isEmpty() || turns < General::gEdgeSize)
+		return false;
+
+	const QString pressedButtonText = checkedPushButton.text();
+	std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix;
+	for (int columnIndex = 0; columnIndex < (int)gameLayout->columnCount(); columnIndex++)
+	{
+		for (int rowIndex = 0; rowIndex < (int)gameLayout->rowCount(); rowIndex++)
+		{
+			QPushButton* const pushButton = qobject_cast<QPushButton*>(gameLayout->itemAtPosition(rowIndex, columnIndex)->widget());
+			if (pushButton == nullptr)
+				continue;
+
+			const QString buttonText = pushButton->text();
+			if (buttonText.isEmpty() || buttonText != pressedButtonText)
+			{
+				resultMatrix[columnIndex][rowIndex] = 0;
+			}
+			else
+			{
+				resultMatrix[columnIndex][rowIndex] = 1;
+			}
+		}
+	}
+
+	int sumDiagonal1 = 0;
+	int sumDiagonal2 = 0;
+	int sumRow1 = 0;
+	int sumRow2 = 0;
+	int sumRow3 = 0;
+	int sumColumn1 = 0;
+	int sumColumn2 = 0;
+	int sumColumn3 = 0;
+	for (int index = 0; index < General::gEdgeSize; index++)
+	{
+		sumDiagonal1 += resultMatrix[index][index];
+		sumDiagonal2 += resultMatrix[General::gEdgeSize - index - 1][index];
+		sumRow1 += resultMatrix[index][0];
+		sumRow2 += resultMatrix[index][1];
+		sumRow3 += resultMatrix[index][2];
+		sumColumn1 += resultMatrix[0][index];
+		sumColumn2 += resultMatrix[1][index];
+		sumColumn3 += resultMatrix[2][index];
+	}
+
+	return sumDiagonal1 == General::gEdgeSize || sumDiagonal2 == General::gEdgeSize || sumRow1 == General::gEdgeSize || sumRow2 == General::gEdgeSize ||
+			sumRow3 == General::gEdgeSize || sumColumn1 == General::gEdgeSize || sumColumn2 == General::gEdgeSize || sumColumn3 == General::gEdgeSize;
 }

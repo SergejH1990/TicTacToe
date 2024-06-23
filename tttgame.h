@@ -16,6 +16,8 @@ protected:
 	void OnGameButtonPressed();
 	void OnStartGamePressed();
 	void OnResetButtonPressed();
+	void ResetButtons();
+	bool IsWinner(const class QPushButton& checkedPushButton);
 
 	class QLabel* playerTurnLabel;
 	class QLabel* scoreLabel;
@@ -30,6 +32,7 @@ protected:
 
 	int xWins;
 	int oWins;
+	int turns;
 	bool isGameInProgress;
 	bool isXTurn;
 
