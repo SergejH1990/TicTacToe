@@ -1,29 +1,43 @@
 #ifndef TTTGAME_H
 #define TTTGAME_H
 
-#include <QWidget>
+#include <array>
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class TTTGame; }
-QT_END_NAMESPACE
+#include <QWidget>
 
 class TTTGame : public QWidget
 {
-    Q_OBJECT
-
+	Q_OBJECT
 public:
-    TTTGame(QWidget *parent = nullptr);
-    ~TTTGame();
+	explicit TTTGame(QWidget *parent = nullptr);
+	virtual ~TTTGame();
+
+protected:
+	void OnGameButtonPressed();
+	void OnStartGamePressed();
+	void OnResetButtonPressed();
+	void ResetButtons();
+	bool IsWinner(const class QPushButton& checkedPushButton);
+
+	class QLabel* playerTurnLabel;
+	class QLabel* scoreLabel;
+
+	class QPushButton* startButton;
+	class QPushButton* resetButton;
+
+	class QGridLayout* gameLayout;
+	class QVBoxLayout* mainLayout;
+
+	std::array<class QPushButton*, 9> gameButtons;
+
+	int xWins;
+	int oWins;
+	int turns;
+	bool isGameInProgress;
+	bool isXTurn;
 
 private:
-    Ui::TTTGame *ui;
-
-
-private slots:
-        void paintField();
+	using super = QWidget;
 };
-
-
-
 
 #endif // TTTGAME_H
