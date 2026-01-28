@@ -10,7 +10,10 @@ namespace General{
 	static const QString gXPlayerString("X");
 	static const QString gOPlayerString("O");
 	static const QString gStartGameString("Game did not start yet");
+    static const QString gGameProgressString("Game is in progress");
+    static const QString gXPlayerWinString("Player X won the round");
 	static const QString gXPlayerTurnString("It's X Turn");
+    static const QString gOPlayerWinString("Player O won the round");
 	static const QString gOPlayerTurnString("It's O Turn");
 	static QString gFormatScoreString("X  %1 : %2  O");
 	static const QFont gAppFont("PazoMathBlackboardBold", 20);

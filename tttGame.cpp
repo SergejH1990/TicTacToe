@@ -13,9 +13,9 @@ playerTurnLabel(nullptr),
 scoreLabel(nullptr),
 startButton(nullptr),
 resetButton(nullptr),
-gameLayout(nullptr),
+fieldButtonsLayout(nullptr),
 mainLayout(nullptr),
-gameButtons(),
+fieldButtons(),
 xWins(0),
 oWins(0),
 turns(0),
@@ -27,34 +27,39 @@ isXTurn(false)
 
 	// Initialize game buttons
 	{
-		gameLayout = new QGridLayout;
+        fieldButtonsLayout = new QGridLayout;
 
-		for (int index = 0; index < (int)gameButtons.size(); index++)
+        for (int index = 0; index < (int)fieldButtons.size(); index++)
 		{
 			QPushButton* const gameButton = new QPushButton(this);
 			gameButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-			connect(gameButton, &QPushButton::clicked, this, &TTTGame::OnGameButtonPressed);
+            connect(gameButton, &QPushButton::clicked, this, &TTTGame::OnFieldButtonPressed);
 
-			gameButtons[index] = gameButton;
-			gameLayout->addWidget(gameButton, index / General::gEdgeSize, index % General::gEdgeSize);
+            fieldButtons[index] = gameButton;
+            fieldButtonsLayout->addWidget(gameButton, index / General::gEdgeSize, index % General::gEdgeSize);
 		}
 
-		mainLayout->addLayout(gameLayout, 2);
+        mainLayout->addLayout(fieldButtonsLayout, 2);
 	}
 
 	// Initialize Game menu.
 	{
 		QVBoxLayout* const menuLayout = new QVBoxLayout;
 
-		scoreLabel = new QLabel(this);
+        scoreLabel = new QLabel;
 		scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
 		scoreLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(scoreLabel);
 
-		playerTurnLabel = new QLabel(this);
+        playerTurnLabel = new QLabel;
 		playerTurnLabel->setText(General::gStartGameString);
 		playerTurnLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(playerTurnLabel);
+
+        gameStateLabel = new QLabel;
+        gameStateLabel->setText(General::gStartGameString);
+        gameStateLabel->setAlignment(Qt::AlignCenter);
+        menuLayout->addWidget(gameStateLabel);
 
 		QHBoxLayout* const gameMenuLayout = new QHBoxLayout;
 		menuLayout->addLayout(gameMenuLayout);
@@ -78,7 +83,7 @@ TTTGame::~TTTGame()
 
 }
 
-void TTTGame::OnGameButtonPressed()
+void TTTGame::OnFieldButtonPressed()
 {
 	if (!isGameInProgress)
 		return;
@@ -87,38 +92,31 @@ void TTTGame::OnGameButtonPressed()
 	if (gameButton == nullptr || gameButton->text() != General::gEmptyString)
 		return;
 
-	turns++;
+    const QString gameButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
+    const QString playerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
+    turns++;
+    gameButton->setText(gameButtonString);
+    const bool didWin = IsWinner(*gameButton);
 
-	if (isXTurn)
-	{
-		gameButton->setText(General::gXPlayerString);
-		const bool didXWin = IsWinner(*gameButton);
-		if (didXWin || turns == 9)
-		{
-			if (didXWin)
-			{
-				xWins++;
-			}
-			ResetButtons();
-		}
+    if (didWin)
+    {
+        if (isXTurn)
+        {
+            xWins++;
+        }
+        else
+        {
+            oWins++;
+        }
+        ResetGame();
+    }
+    else if (turns == 9)
+    {
+        ResetGame();
+    }
 
-		playerTurnLabel->setText(General::gOPlayerTurnString);
-		isXTurn = !isXTurn;
-		return;
-	}
-
-	gameButton->setText(General::gOPlayerString);
-	const bool didOWin = IsWinner(*gameButton);
-	if (didOWin || turns == 9)
-	{
-		if (didOWin)
-		{
-			oWins++;
-		}
-		ResetButtons();
-	}
-	isXTurn = !isXTurn;
-	playerTurnLabel->setText(General::gXPlayerTurnString);
+    playerTurnLabel->setText(playerTurnString);
+    isXTurn = !isXTurn;
 }
 
 void TTTGame::OnStartGamePressed()
@@ -137,15 +135,15 @@ void TTTGame::OnResetButtonPressed()
 	xWins = 0;
 	oWins = 0;
 
-	ResetButtons();
+    ResetGame();
 
 	isGameInProgress = false;
 	playerTurnLabel->setText(General::gStartGameString);
 }
 
-void TTTGame::ResetButtons()
+void TTTGame::ResetGame()
 {
-	for (QPushButton* const gameButton : gameButtons)
+    for (QPushButton* const gameButton : fieldButtons)
 	{
 		if (gameButton == nullptr)
 			continue;
@@ -159,18 +157,18 @@ void TTTGame::ResetButtons()
 	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
 }
 
-bool TTTGame::IsWinner(const QPushButton& checkedPushButton)
+bool TTTGame::IsWinner(const QPushButton& pressedPushButton)
 {
-	if (checkedPushButton.text().isEmpty() || turns < General::gEdgeSize)
+    if (pressedPushButton.text().isEmpty() || turns < General::gEdgeSize)
 		return false;
 
-	const QString pressedButtonText = checkedPushButton.text();
+    const QString pressedButtonText = pressedPushButton.text();
 	std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix;
-	for (int columnIndex = 0; columnIndex < (int)gameLayout->columnCount(); columnIndex++)
+    for (int columnIndex = 0; columnIndex < (int)fieldButtonsLayout->columnCount(); columnIndex++)
 	{
-		for (int rowIndex = 0; rowIndex < (int)gameLayout->rowCount(); rowIndex++)
+        for (int rowIndex = 0; rowIndex < (int)fieldButtonsLayout->rowCount(); rowIndex++)
 		{
-			QPushButton* const pushButton = qobject_cast<QPushButton*>(gameLayout->itemAtPosition(rowIndex, columnIndex)->widget());
+            QPushButton* const pushButton = qobject_cast<QPushButton*>(fieldButtonsLayout->itemAtPosition(rowIndex, columnIndex)->widget());
 			if (pushButton == nullptr)
 				continue;
 
