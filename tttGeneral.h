@@ -11,6 +11,7 @@ namespace General{
 	static const QString gOPlayerString("O");
 	static const QString gStartGameString("Game did not start yet");
     static const QString gGameProgressString("Game is in progress");
+    static const QString gNoPlayersTurnString("No player is active");
     static const QString gXPlayerWinString("Player X won the round");
 	static const QString gXPlayerTurnString("It's X Turn");
     static const QString gOPlayerWinString("Player O won the round");

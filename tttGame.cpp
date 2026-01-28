@@ -52,7 +52,7 @@ isXTurn(false)
 		menuLayout->addWidget(scoreLabel);
 
         playerTurnLabel = new QLabel;
-		playerTurnLabel->setText(General::gStartGameString);
+        playerTurnLabel->setText(General::gNoPlayersTurnString);
 		playerTurnLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(playerTurnLabel);
 
@@ -109,10 +109,12 @@ void TTTGame::OnFieldButtonPressed()
             oWins++;
         }
         ResetGame();
+        return;
     }
-    else if (turns == 9)
+    if (turns == 9)
     {
         ResetGame();
+        return;
     }
 
     playerTurnLabel->setText(playerTurnString);
@@ -128,6 +130,7 @@ void TTTGame::OnStartGamePressed()
 	isXTurn = true;
 
 	playerTurnLabel->setText(General::gXPlayerTurnString);
+    gameStateLabel->setText(General::gGameProgressString);
 }
 
 void TTTGame::OnResetButtonPressed()
@@ -136,9 +139,6 @@ void TTTGame::OnResetButtonPressed()
 	oWins = 0;
 
     ResetGame();
-
-	isGameInProgress = false;
-	playerTurnLabel->setText(General::gStartGameString);
 }
 
 void TTTGame::ResetGame()
@@ -154,7 +154,10 @@ void TTTGame::ResetGame()
 	isXTurn = false;
 	turns = 0;
 
+    isGameInProgress = false;
 	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
+    playerTurnLabel->setText(General::gNoPlayersTurnString);
+    gameStateLabel->setText(General::gStartGameString);
 }
 
 bool TTTGame::IsWinner(const QPushButton& pressedPushButton)
