@@ -4,9 +4,9 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 
-#include "TicTacToeGeneral.h"
+#include "tttGeneral.h"
 
-#include "tttgame.h"
+#include "tttGame.h"
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
 playerTurnLabel(nullptr),

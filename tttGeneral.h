@@ -1,8 +1,9 @@
-#ifndef TICTACTOEGENERAL_H
-#define TICTACTOEGENERAL_H
+#ifndef TTTGENERAL_H
+#define TTTGENERAL_H
 
 #include <QWidget>
 
+// constants and strings used for the tic tac toe game screen
 namespace General{
 	constexpr QSize gWindowSize(1000, 800);
 	constexpr int gEdgeSize = 3;
@@ -16,4 +17,4 @@ namespace General{
 	static const QString gEmptyString;
 }
 
-#endif // TICTACTOEGENERAL_H
+#endif // TTTGENERAL_H

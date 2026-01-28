@@ -1,4 +1,4 @@
-#include "tttgame.h"
+#include "tttGame.h"
 
 #include <QApplication>
 #include <QDebug>
