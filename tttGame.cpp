@@ -9,6 +9,7 @@
 #include "tttGame.h"
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
+gameStateLabel(nullptr),
 playerTurnLabel(nullptr),
 scoreLabel(nullptr),
 startButton(nullptr),
@@ -20,10 +21,11 @@ xWins(0),
 oWins(0),
 turns(0),
 isGameInProgress(false),
-isXTurn(false)
+isXTurn(true)
 {
 	mainLayout = new QVBoxLayout(this);
-	setFixedSize(General::gWindowSize);
+    constexpr QSize windowSize(1000, 800);
+    setFixedSize(windowSize);
 
 	// Initialize game buttons
 	{
@@ -88,15 +90,15 @@ void TTTGame::OnFieldButtonPressed()
 	if (!isGameInProgress)
 		return;
 
-	QPushButton* const gameButton = qobject_cast<QPushButton*>(sender());
-	if (gameButton == nullptr || gameButton->text() != General::gEmptyString)
+    QPushButton* const fieldButton = qobject_cast<QPushButton*>(sender());
+    if (fieldButton == nullptr || fieldButton->text() != General::gEmptyString)
 		return;
 
     const QString gameButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
-    const QString playerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
+    const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
     turns++;
-    gameButton->setText(gameButtonString);
-    const bool didWin = IsWinner(*gameButton);
+    fieldButton->setText(gameButtonString);
+    const bool didWin = IsWinner(*fieldButton);
 
     if (didWin)
     {
@@ -108,16 +110,20 @@ void TTTGame::OnFieldButtonPressed()
         {
             oWins++;
         }
-        ResetGame();
-        return;
-    }
-    if (turns == 9)
-    {
-        ResetGame();
+
+        isXTurn = !isXTurn;
+        InitializeGameRound();
         return;
     }
 
-    playerTurnLabel->setText(playerTurnString);
+    if (turns == 9)
+    {
+        isXTurn = true;
+        InitializeGameRound();
+        return;
+    }
+
+    playerTurnLabel->setText(nextPlayerTurnString);
     isXTurn = !isXTurn;
 }
 
@@ -127,9 +133,9 @@ void TTTGame::OnStartGamePressed()
 		return;
 
 	isGameInProgress = true;
-	isXTurn = true;
+    const QString nextPlayerTurnString = isXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
 
-	playerTurnLabel->setText(General::gXPlayerTurnString);
+    playerTurnLabel->setText(nextPlayerTurnString);
     gameStateLabel->setText(General::gGameProgressString);
 }
 
@@ -138,10 +144,11 @@ void TTTGame::OnResetButtonPressed()
 	xWins = 0;
 	oWins = 0;
 
-    ResetGame();
+    isXTurn = true;
+    InitializeGameRound();
 }
 
-void TTTGame::ResetGame()
+void TTTGame::InitializeGameRound()
 {
     for (QPushButton* const gameButton : fieldButtons)
 	{
@@ -151,7 +158,6 @@ void TTTGame::ResetGame()
 		gameButton->setText(General::gEmptyString);
 	}
 
-	isXTurn = false;
 	turns = 0;
 
     isGameInProgress = false;

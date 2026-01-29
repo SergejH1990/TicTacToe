@@ -31,7 +31,7 @@ protected:
     /**
      * Resets the game to initial state
      */
-    void ResetGame();
+    void InitializeGameRound();
 
     /**
      * Determines if the last set button has lead for the current player to win the game.
