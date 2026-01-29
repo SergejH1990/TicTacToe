@@ -3,6 +3,13 @@ TTTGame
     background-color: rgb(195, 255, 98);
 }
 
+QMessageBox
+{
+    background-color: rgb(195, 255, 98);
+    font: 20pt PazoMathBlackboardBold;
+    color: rgb(255, 85, 0);
+}
+
 QLabel
 {
     font: 20pt PazoMathBlackboardBold;
@@ -11,6 +18,6 @@ QLabel
 QPushButton
 {
     background-color: rgb(255, 255, 0);
-	font: 20pt PazoMathBlackboardBold;
-	color: rgb(255, 85, 0);
+    font: 20pt PazoMathBlackboardBold;
+    color: rgb(255, 85, 0);
  }

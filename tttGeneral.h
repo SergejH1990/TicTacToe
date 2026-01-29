@@ -1,19 +1,20 @@
-#ifndef TICTACTOEGENERAL_H
-#define TICTACTOEGENERAL_H
+#ifndef TTTGENERAL_H
+#define TTTGENERAL_H
 
 #include <QWidget>
 
+// constants and strings used for the tic tac toe game screen
 namespace General{
-	constexpr QSize gWindowSize(1000, 800);
 	constexpr int gEdgeSize = 3;
 	static const QString gXPlayerString("X");
 	static const QString gOPlayerString("O");
-	static const QString gStartGameString("Game did not start yet");
+    static const QString gGameIdleString("Game did not start yet");
+    static const QString gGameProgressString("Game is in progress");
+    static const QString gNoPlayersTurnString("No player is active");
 	static const QString gXPlayerTurnString("It's X Turn");
 	static const QString gOPlayerTurnString("It's O Turn");
 	static QString gFormatScoreString("X  %1 : %2  O");
-	static const QFont gAppFont("PazoMathBlackboardBold", 20);
 	static const QString gEmptyString;
 }
 
-#endif // TICTACTOEGENERAL_H
+#endif // TTTGENERAL_H

@@ -16,10 +16,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        tttgame.cpp
-        tttgame.h
-	TicTacToeGeneral.h
-	Resources/style.qss
+        tttGame.cpp
+        tttGame.h
+        tttGeneral.h
 	Resources/MyResources.qrc
 )
 
@@ -47,7 +46,6 @@ else()
 endif()
 
 target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_include_directories(TicTacToe PRIVATE Resources)
 
 set_target_properties(TicTacToe PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
