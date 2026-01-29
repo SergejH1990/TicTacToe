@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <QMessageBox>
 
 #include "tttGeneral.h"
 
@@ -59,7 +60,7 @@ isXTurn(true)
 		menuLayout->addWidget(playerTurnLabel);
 
         gameStateLabel = new QLabel;
-        gameStateLabel->setText(General::gStartGameString);
+        gameStateLabel->setText(General::gGameIdleString);
         gameStateLabel->setAlignment(Qt::AlignCenter);
         menuLayout->addWidget(gameStateLabel);
 
@@ -94,11 +95,12 @@ void TTTGame::OnFieldButtonPressed()
     if (fieldButton == nullptr || fieldButton->text() != General::gEmptyString)
 		return;
 
-    const QString gameButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
-    const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
     turns++;
-    fieldButton->setText(gameButtonString);
-    const bool didWin = IsWinner(*fieldButton);
+
+    // Marking field button with active player's string and checking if player has won.
+    const QString fieldButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
+    fieldButton->setText(fieldButtonString);
+    const bool didWin = DidPlayerWinner(*fieldButton);
 
     if (didWin)
     {
@@ -111,6 +113,13 @@ void TTTGame::OnFieldButtonPressed()
             oWins++;
         }
 
+        QMessageBox winMessage;
+        constexpr int messageBoxWidth = 500;
+        winMessage.setFixedWidth(messageBoxWidth);
+        winMessage.setText(QString("Player \"%1\" has won the current round.").arg(fieldButtonString));
+        winMessage.exec();
+
+        // When a player won then the losing player should start in the next round.
         isXTurn = !isXTurn;
         InitializeGameRound();
         return;
@@ -123,6 +132,8 @@ void TTTGame::OnFieldButtonPressed()
         return;
     }
 
+    // Updating for next turn if there is no winner and more turns left.
+    const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
     playerTurnLabel->setText(nextPlayerTurnString);
     isXTurn = !isXTurn;
 }
@@ -163,10 +174,10 @@ void TTTGame::InitializeGameRound()
     isGameInProgress = false;
 	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
     playerTurnLabel->setText(General::gNoPlayersTurnString);
-    gameStateLabel->setText(General::gStartGameString);
+    gameStateLabel->setText(General::gGameIdleString);
 }
 
-bool TTTGame::IsWinner(const QPushButton& pressedPushButton)
+bool TTTGame::DidPlayerWinner(const QPushButton& pressedPushButton)
 {
     if (pressedPushButton.text().isEmpty() || turns < General::gEdgeSize)
 		return false;

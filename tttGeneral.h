@@ -8,15 +8,12 @@ namespace General{
 	constexpr int gEdgeSize = 3;
 	static const QString gXPlayerString("X");
 	static const QString gOPlayerString("O");
-	static const QString gStartGameString("Game did not start yet");
+    static const QString gGameIdleString("Game did not start yet");
     static const QString gGameProgressString("Game is in progress");
     static const QString gNoPlayersTurnString("No player is active");
-    static const QString gXPlayerWinString("Player X won the round");
 	static const QString gXPlayerTurnString("It's X Turn");
-    static const QString gOPlayerWinString("Player O won the round");
 	static const QString gOPlayerTurnString("It's O Turn");
 	static QString gFormatScoreString("X  %1 : %2  O");
-	static const QFont gAppFont("PazoMathBlackboardBold", 20);
 	static const QString gEmptyString;
 }
 

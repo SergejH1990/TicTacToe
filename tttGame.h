@@ -39,7 +39,7 @@ protected:
      * @param pressedPushButton the button that was last pressed.
      * @return true if player is a winner false otherwise.
      */
-    bool IsWinner(const class QPushButton& pressedPushButton);
+    bool DidPlayerWinner(const class QPushButton& pressedPushButton);
 
     class QLabel* gameStateLabel; /**< The label shows in which state the game is currently. */
     class QLabel* playerTurnLabel; /**< The label displays which players turn it is currently. */
