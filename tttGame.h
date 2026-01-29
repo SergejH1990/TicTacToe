@@ -48,16 +48,16 @@ protected:
     class QPushButton* startButton; /**< The button starts the game session. */
     class QPushButton* resetButton; /**< The button resets the game session. */
 
-    class QGridLayout* fieldButtonsLayout;
-	class QVBoxLayout* mainLayout;
+    class QGridLayout* fieldButtonsLayout; /**< Layout which contains the buttons the players are competing against each other. */
+    class QVBoxLayout* mainLayout; /**< Layout which contains all widgets of the game. */
 
-    std::array<class QPushButton*, 9> fieldButtons;
+    std::array<class QPushButton*, 9> fieldButtons; /**< The buttons where the game is played. */
 
-	int xWins;
-	int oWins;
-	int turns;
-	bool isGameInProgress;
-	bool isXTurn;
+    int xWins; /**< Tracks the wins for Player X. */
+    int oWins; /**< Tracks the wins for Player O. */
+    int turns; /**< Tracks the amount of turns played in the current round. */
+    bool isGameInProgress; /**< True if a round is being played, false if a round has finished and next one is not started yet. */
+    bool isXTurn; /**< True if it is Player X turn and false if it is Player O turn. */
 
 private:
 	using super = QWidget;
