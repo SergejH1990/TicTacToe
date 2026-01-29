@@ -5,8 +5,6 @@
 #include <QGridLayout>
 #include <QMessageBox>
 
-#include "tttGeneral.h"
-
 #include "tttGame.h"
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
@@ -18,6 +16,7 @@ resetButton(nullptr),
 fieldButtonsLayout(nullptr),
 mainLayout(nullptr),
 fieldButtons(),
+resultMatrix(),
 xWins(0),
 oWins(0),
 turns(0),
@@ -27,6 +26,8 @@ isXTurn(true)
 	mainLayout = new QVBoxLayout(this);
     constexpr QSize windowSize(1000, 800);
     setFixedSize(windowSize);
+
+    InitializeResultMatrix();
 
 	// Initialize game buttons
 	{
@@ -174,6 +175,7 @@ void TTTGame::InitializeGameRound()
 	}
 	turns = 0;
     isGameInProgress = false;
+    InitializeResultMatrix();
 
     // Update game labels
 	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
@@ -181,30 +183,37 @@ void TTTGame::InitializeGameRound()
     gameStateLabel->setText(General::gGameIdleString);
 }
 
+void TTTGame::InitializeResultMatrix()
+{
+    for (auto outerResultIterator = resultMatrix.begin(); outerResultIterator < resultMatrix.end(); outerResultIterator++)
+    {
+        for (auto innerResultIterator = outerResultIterator->begin(); innerResultIterator < outerResultIterator->end(); innerResultIterator++)
+        {
+            *innerResultIterator = 100;
+        }
+    }
+}
+
 bool TTTGame::DidPlayerWinner(const QPushButton& pressedPushButton)
 {
     if (pressedPushButton.text().isEmpty() || turns < General::gEdgeSize)
 		return false;
 
+    // Update the result matrix with the new marked button.
     const QString pressedButtonText = pressedPushButton.text();
-	std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix;
     for (int columnIndex = 0; columnIndex < (int)fieldButtonsLayout->columnCount(); columnIndex++)
 	{
         for (int rowIndex = 0; rowIndex < (int)fieldButtonsLayout->rowCount(); rowIndex++)
 		{
-            QPushButton* const pushButton = qobject_cast<QPushButton*>(fieldButtonsLayout->itemAtPosition(rowIndex, columnIndex)->widget());
-			if (pushButton == nullptr)
-				continue;
+            QLayoutItem* const fieldButtonItem = fieldButtonsLayout->itemAtPosition(rowIndex, columnIndex);
+            if (fieldButtonItem == nullptr)
+                continue;
 
-			const QString buttonText = pushButton->text();
-			if (buttonText.isEmpty() || buttonText != pressedButtonText)
-			{
-				resultMatrix[columnIndex][rowIndex] = 0;
-			}
-			else
-			{
-				resultMatrix[columnIndex][rowIndex] = 1;
-			}
+            QPushButton* const pushButton = qobject_cast<QPushButton*>(fieldButtonItem->widget());
+            if (pushButton->text() != pressedButtonText)
+                continue;
+
+            resultMatrix[columnIndex][rowIndex] = isXTurn ? 1 : 2;
 		}
 	}
 
@@ -216,6 +225,8 @@ bool TTTGame::DidPlayerWinner(const QPushButton& pressedPushButton)
 	int sumColumn1 = 0;
 	int sumColumn2 = 0;
 	int sumColumn3 = 0;
+
+    // Create sums for all rows, columns and diagonals
 	for (int index = 0; index < General::gEdgeSize; index++)
 	{
 		sumDiagonal1 += resultMatrix[index][index];
@@ -228,6 +239,8 @@ bool TTTGame::DidPlayerWinner(const QPushButton& pressedPushButton)
 		sumColumn3 += resultMatrix[2][index];
 	}
 
-	return sumDiagonal1 == General::gEdgeSize || sumDiagonal2 == General::gEdgeSize || sumRow1 == General::gEdgeSize || sumRow2 == General::gEdgeSize ||
-			sumRow3 == General::gEdgeSize || sumColumn1 == General::gEdgeSize || sumColumn2 == General::gEdgeSize || sumColumn3 == General::gEdgeSize;
+    // Player won if his unique win sum is included in any of the sums.
+    const int resultSum = isXTurn ? General::gEdgeSize : 2 * General::gEdgeSize;
+    return sumDiagonal1 == resultSum || sumDiagonal2 == resultSum || sumRow1 == resultSum || sumRow2 == resultSum ||
+            sumRow3 == resultSum || sumColumn1 == resultSum || sumColumn2 == resultSum || sumColumn3 == resultSum;
 }

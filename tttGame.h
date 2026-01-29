@@ -5,6 +5,8 @@
 
 #include <QWidget>
 
+#include "tttGeneral.h"
+
 class TTTGame : public QWidget
 {
 	Q_OBJECT
@@ -34,6 +36,11 @@ protected:
     void InitializeGameRound();
 
     /**
+     * Initializes the result matrix components to the value of 100 so that the win sum for each player is unique.
+     */
+    void InitializeResultMatrix();
+
+    /**
      * Determines if the last set button has lead for the current player to win the game.
      *
      * @param pressedPushButton the button that was last pressed.
@@ -52,6 +59,7 @@ protected:
     class QVBoxLayout* mainLayout; /**< Layout which contains all widgets of the game. */
 
     std::array<class QPushButton*, 9> fieldButtons; /**< The buttons where the game is played. */
+    std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix; /**< Matrix which is used to track if a player has won the round. */
 
     int xWins; /**< Tracks the wins for Player X. */
     int oWins; /**< Tracks the wins for Player O. */
