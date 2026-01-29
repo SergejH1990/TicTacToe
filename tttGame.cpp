@@ -102,6 +102,9 @@ void TTTGame::OnFieldButtonPressed()
     fieldButton->setText(fieldButtonString);
     const bool didWin = DidPlayerWinner(*fieldButton);
 
+    QMessageBox winMessage(this);
+    winMessage.setIcon(QMessageBox::Information);
+
     if (didWin)
     {
         if (isXTurn)
@@ -113,9 +116,6 @@ void TTTGame::OnFieldButtonPressed()
             oWins++;
         }
 
-        QMessageBox winMessage;
-        constexpr int messageBoxWidth = 500;
-        winMessage.setFixedWidth(messageBoxWidth);
         winMessage.setText(QString("Player \"%1\" has won the current round.").arg(fieldButtonString));
         winMessage.exec();
 
@@ -127,6 +127,9 @@ void TTTGame::OnFieldButtonPressed()
 
     if (turns == 9)
     {
+        winMessage.setText("No Player has won the current round. It's a draw.");
+        winMessage.exec();
+
         isXTurn = true;
         InitializeGameRound();
         return;
@@ -161,6 +164,7 @@ void TTTGame::OnResetButtonPressed()
 
 void TTTGame::InitializeGameRound()
 {
+    // Clear field and initialize game state.
     for (QPushButton* const gameButton : fieldButtons)
 	{
 		if (gameButton == nullptr)
@@ -168,10 +172,10 @@ void TTTGame::InitializeGameRound()
 
 		gameButton->setText(General::gEmptyString);
 	}
-
 	turns = 0;
-
     isGameInProgress = false;
+
+    // Update game labels
 	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
     playerTurnLabel->setText(General::gNoPlayersTurnString);
     gameStateLabel->setText(General::gGameIdleString);
