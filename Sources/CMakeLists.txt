@@ -15,10 +15,10 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
-        main.cpp
-        tttGame.cpp
-        tttGame.h
-        tttGeneral.h
+		main.cpp
+		tttGame.cpp
+		tttGame.h
+		tttGeneral.h
 	Resources/MyResources.qrc
 )
 
