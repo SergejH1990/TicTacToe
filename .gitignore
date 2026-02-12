@@ -1,3 +1,5 @@
 build/
+build-Release/
+build-Debug/
 .qtcreator/
 CMakeLists.txt.user

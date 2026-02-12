@@ -26,6 +26,7 @@ protected:
 	void OnStartGamePressed();
 
     /**
+     *
      * Processes button press of the reset game button.
      */
 	void OnResetButtonPressed();
