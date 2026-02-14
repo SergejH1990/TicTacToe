@@ -32,6 +32,8 @@ add_executable(TicTacToe
 add_executable(TestGame
 	Tests/Test_TicTacToe/tst_testwincondition.cpp
 	${PROJECT_SOURCES}
+	Tests/TTGame_Test.cpp
+	Tests/TTGame_Test.h
 )
 
 # Link libraries for main application target and test cases target
