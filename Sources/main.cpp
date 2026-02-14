@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 	QFile styleSheetFile(":/Resources/style.qss");
 	if (styleSheetFile.open(QFile::ReadOnly))
 	{
-		qDebug() << "File loaded successfully";
+		qDebug() << "Stylesheet file loaded successfully";
 		qApp->setStyleSheet(QLatin1String(styleSheetFile.readAll()));
 	}
 
