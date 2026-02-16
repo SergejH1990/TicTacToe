@@ -1,3 +1,8 @@
+CMakeFiles/
 build/
 .qtcreator/
+.qt/
+cmake_install.cmake
 CMakeLists.txt.user
+CMakeCache.txt
+Makefile

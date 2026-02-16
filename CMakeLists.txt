@@ -26,12 +26,13 @@ set(PROJECT_SOURCES
 add_executable(TicTacToe
 	Sources/main.cpp
 	${PROJECT_SOURCES}
+
 )
 
 # Create executable for test cases
 add_executable(TestGame
-	Tests/Test_TicTacToe/tst_testwincondition.cpp
 	${PROJECT_SOURCES}
+	Tests/Test_TicTacToe/tst_testwincondition.cpp
 	Tests/TTGame_Test.cpp
 	Tests/TTGame_Test.h
 )
