@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 		qApp->setStyleSheet(QLatin1String(styleSheetFile.readAll()));
 	}
 
-	TTTGame ticTacToe;
+	UI::TTTGame ticTacToe;
 	ticTacToe.show();
 
 	return application.exec();

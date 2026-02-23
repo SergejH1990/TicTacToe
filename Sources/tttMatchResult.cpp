@@ -1,5 +1,7 @@
 #include "tttMatchResult.h"
 
+using namespace Logic;
+
 TTTMatchResult::TTTMatchResult() :
 resultMatrix()
 {

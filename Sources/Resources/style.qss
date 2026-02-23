@@ -1,23 +1,23 @@
-TTTGame
+UI--TTTGame
 {
-    background-color: rgb(195, 255, 98);
+	background-color: rgb(195, 255, 98);
 }
 
 QMessageBox
 {
-    background-color: rgb(195, 255, 98);
-    font: 20pt PazoMathBlackboardBold;
-    color: rgb(255, 85, 0);
+	background-color: rgb(195, 255, 98);
+	font: 20pt PazoMathBlackboardBold;
+	color: rgb(255, 85, 0);
 }
 
 QLabel
 {
-    font: 20pt PazoMathBlackboardBold;
+	font: 20pt PazoMathBlackboardBold;
 }
 
 QPushButton
 {
-    background-color: rgb(255, 255, 0);
-    font: 20pt PazoMathBlackboardBold;
-    color: rgb(255, 85, 0);
+	background-color: rgb(255, 255, 0);
+	font: 20pt PazoMathBlackboardBold;
+	color: rgb(255, 85, 0);
  }

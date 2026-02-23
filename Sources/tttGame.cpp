@@ -8,6 +8,8 @@
 
 #include "tttGame.h"
 
+using namespace UI;
+
 TTTGame::TTTGame(QWidget *parent): super(parent),
 gameStateLabel(nullptr),
 playerTurnLabel(nullptr),
@@ -101,45 +103,46 @@ void TTTGame::OnFieldButtonPressed()
 	const QString fieldButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
 	fieldButton->setText(fieldButtonString);
 	UpdateResultForPressedButton(*fieldButton);
-	const bool didWin = matchResult.DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
+	static constexpr int kMinimumRoundsPlayed = 5;
+	const bool didWin = turns < kMinimumRoundsPlayed ? false : matchResult.DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
 
 	QMessageBox winMessage(this);
 	winMessage.setIcon(QMessageBox::Information);
 
-    if (didWin)
-    {
-        if (isXTurn)
-        {
-            xWins++;
-        }
-        else
-        {
-            oWins++;
-        }
+	if (didWin)
+	{
+		if (isXTurn)
+		{
+			xWins++;
+		}
+		else
+		{
+			oWins++;
+		}
 
-        winMessage.setText(QString("Player \"%1\" has won the current round.").arg(fieldButtonString));
-        winMessage.exec();
+		winMessage.setText(QString("Player \"%1\" has won the current round.").arg(fieldButtonString));
+		winMessage.exec();
 
-        // When a player won then the losing player should start in the next round.
-        isXTurn = !isXTurn;
-        InitializeGameRound();
-        return;
-    }
+		// When a player won then the losing player should start in the next round.
+		isXTurn = !isXTurn;
+		InitializeGameRound();
+		return;
+	}
 
-    if (turns == 9)
-    {
-        winMessage.setText("No Player has won the current round. It's a draw.");
-        winMessage.exec();
+	if (turns == 9)
+	{
+		winMessage.setText("No Player has won the current round. It's a draw.");
+		winMessage.exec();
 
-        isXTurn = true;
-        InitializeGameRound();
-        return;
-    }
+		isXTurn = true;
+		InitializeGameRound();
+		return;
+	}
 
-    // Updating for next turn if there is no winner and more turns left.
-    const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
-    playerTurnLabel->setText(nextPlayerTurnString);
-    isXTurn = !isXTurn;
+	// Updating for next turn if there is no winner and more turns left.
+	const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
+	playerTurnLabel->setText(nextPlayerTurnString);
+	isXTurn = !isXTurn;
 }
 
 void TTTGame::OnStartGamePressed()

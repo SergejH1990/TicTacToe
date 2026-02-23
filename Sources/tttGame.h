@@ -8,59 +8,62 @@
 
 #include "tttMatchResult.h"
 
-class TTTGame : public QWidget
-{
-	Q_OBJECT
-public:
-	explicit TTTGame(QWidget *parent = nullptr);
-	virtual ~TTTGame();
+namespace UI{
 
-protected:
-    /**
-     *  Processes button presses of the players in the game field.
-     */
-    void OnFieldButtonPressed();
+	class TTTGame : public QWidget
+	{
+		Q_OBJECT
+	public:
+		explicit TTTGame(QWidget *parent = nullptr);
+		virtual ~TTTGame();
 
-    /**
-     * Processes button press of the start game button.
-     */
-	void OnStartGamePressed();
+	protected:
+		/**
+		 *  Processes button presses of the players in the game field.
+		 */
+		void OnFieldButtonPressed();
 
-    /**
-     *
-     * Processes button press of the reset game button.
-     */
-	void OnResetButtonPressed();
+		/**
+		 * Processes button press of the start game button.
+		 */
+		void OnStartGamePressed();
 
-    /**
-     * Resets the game to initial state
-     */
-    void InitializeGameRound();
+		/**
+		 *
+		 * Processes button press of the reset game button.
+		 */
+		void OnResetButtonPressed();
 
-	void UpdateResultForPressedButton(const QPushButton& pressedPushButton);
+		/**
+		 * Resets the game to initial state
+		 */
+		void InitializeGameRound();
 
-    class QLabel* gameStateLabel; /**< The label shows in which state the game is currently. */
-    class QLabel* playerTurnLabel; /**< The label displays which players turn it is currently. */
-    class QLabel* scoreLabel; /**< The label displays the score between the players for the current session. */
+		void UpdateResultForPressedButton(const QPushButton& pressedPushButton);
 
-    class QPushButton* startButton; /**< The button starts the game session. */
-    class QPushButton* resetButton; /**< The button resets the game session. */
+		class QLabel* gameStateLabel; /**< The label shows in which state the game is currently. */
+		class QLabel* playerTurnLabel; /**< The label displays which players turn it is currently. */
+		class QLabel* scoreLabel; /**< The label displays the score between the players for the current session. */
 
-    class QGridLayout* fieldButtonsLayout; /**< Layout which contains the buttons the players are competing against each other. */
-    class QVBoxLayout* mainLayout; /**< Layout which contains all widgets of the game. */
+		class QPushButton* startButton; /**< The button starts the game session. */
+		class QPushButton* resetButton; /**< The button resets the game session. */
 
-	TTTMatchResult matchResult;
+		class QGridLayout* fieldButtonsLayout; /**< Layout which contains the buttons the players are competing against each other. */
+		class QVBoxLayout* mainLayout; /**< Layout which contains all widgets of the game. */
 
-    std::array<class QPushButton*, 9> fieldButtons; /**< The buttons where the game is played. */
+		Logic::TTTMatchResult matchResult;
 
-    int xWins; /**< Tracks the wins for Player X. */
-    int oWins; /**< Tracks the wins for Player O. */
-    int turns; /**< Tracks the amount of turns played in the current round. */
-    bool isGameInProgress; /**< True if a round is being played, false if a round has finished and next one is not started yet. */
-    bool isXTurn; /**< True if it is Player X turn and false if it is Player O turn. */
+		std::array<class QPushButton*, 9> fieldButtons; /**< The buttons where the game is played. */
 
-private:
-	using super = QWidget;
-};
+		int xWins; /**< Tracks the wins for Player X. */
+		int oWins; /**< Tracks the wins for Player O. */
+		int turns; /**< Tracks the amount of turns played in the current round. */
+		bool isGameInProgress; /**< True if a round is being played, false if a round has finished and next one is not started yet. */
+		bool isXTurn; /**< True if it is Player X turn and false if it is Player O turn. */
+
+	private:
+		using super = QWidget;
+	};
+}
 
 #endif // TTTGAME_H

@@ -3,11 +3,12 @@
 
 #include <QWidget>
 
-// constants and strings used for the tic tac toe game screen
+// constants and strings used for the tic tac toe game
 namespace General{
-	constexpr int gEdgeSize = 3;
-	constexpr int gXPlayerWinSum = gEdgeSize;
-	constexpr int gOPlayerWinSum = 2 * gEdgeSize;
+
+	static constexpr int gEdgeSize = 3;
+	static constexpr int gXPlayerWinSum = gEdgeSize;
+	static constexpr int gOPlayerWinSum = 2 * gEdgeSize;
 	static const QString gXPlayerString("X");
 	static const QString gOPlayerString("O");
     static const QString gGameIdleString("Game did not start yet");

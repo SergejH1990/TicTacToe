@@ -14,7 +14,7 @@ public:
 	~TestWinConditions();
 
 private:
-	TTTMatchResult matchResult;
+	Logic::TTTMatchResult matchResult;
 
 private slots:
 	void test_case_initial_condition();
