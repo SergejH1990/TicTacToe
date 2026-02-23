@@ -29,33 +29,33 @@ target_sources(TicTacToe PUBLIC
 )
 
 # Create executable for test cases
-add_executable(TestGame)
+add_executable(TestWinCondition)
 
-target_sources(TestGame PUBLIC
+target_sources(TestWinCondition PUBLIC
 	Sources/tttGeneral.h
 	Sources/tttMatchResult.h
 	Sources/tttMatchResult.cpp
-	Tests/Test_TicTacToe/tst_testwincondition.cpp
+	Tests/Test_TicTacToe/tst_testwinconditions.cpp
 )
 
 
 # Link libraries for main application target and test cases target
 target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(TestGame PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
+target_link_libraries(TestWinCondition PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
 
 set_target_properties(TicTacToe PROPERTIES
-    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-    MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+	MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+	MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+	MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+	MACOSX_BUNDLE TRUE
+	WIN32_EXECUTABLE TRUE
 )
 
 set_target_properties(TicTacToe PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TicTacToe"
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TicTacToe"
 )
 
-set_target_properties(TestGame PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TestGame"
+set_target_properties(TestWinCondition PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TestWinCondition"
 )
 
