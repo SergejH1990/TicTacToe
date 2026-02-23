@@ -2,7 +2,7 @@
 
 // add necessary includes here
 
-#include "Tests/TTGame_Test.h"
+#include "Sources/tttMatchResult.h"
 
 class TestWinCondition : public QObject
 {
@@ -13,27 +13,26 @@ public:
 	~TestWinCondition();
 
 private:
-	TTGame_Test* gameWindow;
+	TTTMatchResult matchResult;
 
 private slots:
 	void test_case1();
 };
 
 TestWinCondition::TestWinCondition(): QObject(),
-gameWindow(nullptr)
+matchResult()
 {
-	gameWindow = new TTGame_Test();
 }
 
 TestWinCondition::~TestWinCondition()
 {
-	gameWindow->deleteLater();
 }
 
 void TestWinCondition::test_case1()
 {
-	gameWindow->InitializeGameRound();
-	QVERIFY(gameWindow->DidPlayerWinner(gameWindow->GetFieldButton(0)) == false);
+	matchResult.InitializeResultMatrix();
+	constexpr int OPlayerWon = 6;
+	QVERIFY(matchResult.DidPlayerWinner(OPlayerWon) == true);
 }
 
 QTEST_MAIN(TestWinCondition)

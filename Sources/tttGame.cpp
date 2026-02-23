@@ -1,9 +1,10 @@
-
 #include <QPushButton>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QMessageBox>
+
+#include "tttGeneral.h"
 
 #include "tttGame.h"
 
@@ -15,8 +16,8 @@ startButton(nullptr),
 resetButton(nullptr),
 fieldButtonsLayout(nullptr),
 mainLayout(nullptr),
+matchResult(),
 fieldButtons(),
-resultMatrix(),
 xWins(0),
 oWins(0),
 turns(0),
@@ -24,10 +25,8 @@ isGameInProgress(false),
 isXTurn(true)
 {
 	mainLayout = new QVBoxLayout(this);
-    constexpr QSize windowSize(1000, 800);
-    setFixedSize(windowSize);
-
-    InitializeResultMatrix();
+	constexpr QSize windowSize(1000, 800);
+	setFixedSize(windowSize);
 
 	// Initialize game buttons
 	{
@@ -92,19 +91,20 @@ void TTTGame::OnFieldButtonPressed()
 	if (!isGameInProgress)
 		return;
 
-    QPushButton* const fieldButton = qobject_cast<QPushButton*>(sender());
-    if (fieldButton == nullptr || fieldButton->text() != General::gEmptyString)
+	QPushButton* const fieldButton = qobject_cast<QPushButton*>(sender());
+	if (fieldButton == nullptr || fieldButton->text() != General::gEmptyString)
 		return;
 
-    turns++;
+	turns++;
 
-    // Marking field button with active player's string and checking if player has won.
-    const QString fieldButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
-    fieldButton->setText(fieldButtonString);
-    const bool didWin = DidPlayerWinner(*fieldButton);
+	// Marking field button with active player's string and checking if player has won.
+	const QString fieldButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
+	fieldButton->setText(fieldButtonString);
+	UpdateResultForPressedButton(*fieldButton);
+	const bool didWin = matchResult.DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
 
-    QMessageBox winMessage(this);
-    winMessage.setIcon(QMessageBox::Information);
+	QMessageBox winMessage(this);
+	winMessage.setIcon(QMessageBox::Information);
 
     if (didWin)
     {
@@ -148,10 +148,10 @@ void TTTGame::OnStartGamePressed()
 		return;
 
 	isGameInProgress = true;
-    const QString nextPlayerTurnString = isXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
+	const QString nextPlayerTurnString = isXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
 
-    playerTurnLabel->setText(nextPlayerTurnString);
-    gameStateLabel->setText(General::gGameProgressString);
+	playerTurnLabel->setText(nextPlayerTurnString);
+	gameStateLabel->setText(General::gGameProgressString);
 }
 
 void TTTGame::OnResetButtonPressed()
@@ -159,14 +159,14 @@ void TTTGame::OnResetButtonPressed()
 	xWins = 0;
 	oWins = 0;
 
-    isXTurn = true;
-    InitializeGameRound();
+	isXTurn = true;
+	InitializeGameRound();
 }
 
 void TTTGame::InitializeGameRound()
 {
-    // Clear field and initialize game state.
-    for (QPushButton* const gameButton : fieldButtons)
+	// Clear field and initialize game state.
+	for (QPushButton* const gameButton : fieldButtons)
 	{
 		if (gameButton == nullptr)
 			continue;
@@ -174,73 +174,36 @@ void TTTGame::InitializeGameRound()
 		gameButton->setText(General::gEmptyString);
 	}
 	turns = 0;
-    isGameInProgress = false;
-    InitializeResultMatrix();
+	isGameInProgress = false;
+	matchResult.InitializeResultMatrix();
 
-    // Update game labels
+	// Update game labels
 	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
-    playerTurnLabel->setText(General::gNoPlayersTurnString);
-    gameStateLabel->setText(General::gGameIdleString);
+	playerTurnLabel->setText(General::gNoPlayersTurnString);
+	gameStateLabel->setText(General::gGameIdleString);
 }
 
-void TTTGame::InitializeResultMatrix()
+void TTTGame::UpdateResultForPressedButton(const QPushButton& pressedPushButton)
 {
-    for (auto outerResultIterator = resultMatrix.begin(); outerResultIterator < resultMatrix.end(); outerResultIterator++)
-    {
-        for (auto innerResultIterator = outerResultIterator->begin(); innerResultIterator < outerResultIterator->end(); innerResultIterator++)
-        {
-            *innerResultIterator = 100;
-        }
-    }
-}
+	if (pressedPushButton.text().isEmpty())
+		return;
 
-bool TTTGame::DidPlayerWinner(const QPushButton& pressedPushButton)
-{
-    if (pressedPushButton.text().isEmpty() || turns < General::gEdgeSize)
-		return false;
-
-    // Update the result matrix with the new marked button.
-    const QString pressedButtonText = pressedPushButton.text();
-    for (int columnIndex = 0; columnIndex < (int)fieldButtonsLayout->columnCount(); columnIndex++)
+	// Update the result matrix with the new marked button.
+	for (int columnIndex = 0; columnIndex < (int)fieldButtonsLayout->columnCount(); columnIndex++)
 	{
-        for (int rowIndex = 0; rowIndex < (int)fieldButtonsLayout->rowCount(); rowIndex++)
+		for (int rowIndex = 0; rowIndex < (int)fieldButtonsLayout->rowCount(); rowIndex++)
 		{
-            QLayoutItem* const fieldButtonItem = fieldButtonsLayout->itemAtPosition(rowIndex, columnIndex);
-            if (fieldButtonItem == nullptr)
-                continue;
+			QLayoutItem* const fieldButtonItem = fieldButtonsLayout->itemAtPosition(rowIndex, columnIndex);
+			if (fieldButtonItem == nullptr)
+				continue;
 
-            QPushButton* const pushButton = qobject_cast<QPushButton*>(fieldButtonItem->widget());
-            if (pushButton->text() != pressedButtonText)
-                continue;
+			QPushButton* const pushButton = qobject_cast<QPushButton*>(fieldButtonItem->widget());
+			if (pushButton != &pressedPushButton)
+				continue;
 
-            resultMatrix[columnIndex][rowIndex] = isXTurn ? 1 : 2;
+			const int matrixEntry = isXTurn ? General::gXPlayerWinSum / General::gEdgeSize : General::gOPlayerWinSum / General::gEdgeSize;
+			matchResult.UpdateResultMatrix(columnIndex, rowIndex, matrixEntry);
+			break;
 		}
 	}
-
-	int sumDiagonal1 = 0;
-	int sumDiagonal2 = 0;
-	int sumRow1 = 0;
-	int sumRow2 = 0;
-	int sumRow3 = 0;
-	int sumColumn1 = 0;
-	int sumColumn2 = 0;
-	int sumColumn3 = 0;
-
-    // Create sums for all rows, columns and diagonals
-	for (int index = 0; index < General::gEdgeSize; index++)
-	{
-		sumDiagonal1 += resultMatrix[index][index];
-		sumDiagonal2 += resultMatrix[General::gEdgeSize - index - 1][index];
-		sumRow1 += resultMatrix[index][0];
-		sumRow2 += resultMatrix[index][1];
-		sumRow3 += resultMatrix[index][2];
-		sumColumn1 += resultMatrix[0][index];
-		sumColumn2 += resultMatrix[1][index];
-		sumColumn3 += resultMatrix[2][index];
-	}
-
-    // Player won if his unique win sum is included in any of the sums.
-    const int resultSum = isXTurn ? General::gEdgeSize : 2 * General::gEdgeSize;
-    return sumDiagonal1 == resultSum || sumDiagonal2 == resultSum || sumRow1 == resultSum || sumRow2 == resultSum ||
-            sumRow3 == resultSum || sumColumn1 == resultSum || sumColumn2 == resultSum || sumColumn3 == resultSum;
 }

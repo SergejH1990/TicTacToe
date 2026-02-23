@@ -6,6 +6,8 @@
 // constants and strings used for the tic tac toe game screen
 namespace General{
 	constexpr int gEdgeSize = 3;
+	constexpr int gXPlayerWinSum = gEdgeSize;
+	constexpr int gOPlayerWinSum = 2 * gEdgeSize;
 	static const QString gXPlayerString("X");
 	static const QString gOPlayerString("O");
     static const QString gGameIdleString("Game did not start yet");

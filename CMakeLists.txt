@@ -15,28 +15,29 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Test)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Test)
 
-# Main application sources
-set(PROJECT_SOURCES
-		Sources/tttGame.cpp
-		Sources/tttGame.h
-		Sources/tttGeneral.h
-		Sources/Resources/MyResources.qrc
-)
-
 # Create executable for main application
-add_executable(TicTacToe
-	Sources/main.cpp
-	${PROJECT_SOURCES}
+add_executable(TicTacToe)
 
+target_sources(TicTacToe PUBLIC
+	Sources/main.cpp
+	Sources/tttGeneral.h
+	Sources/tttGame.cpp
+	Sources/tttGame.h
+	Sources/tttMatchResult.h
+	Sources/tttMatchResult.cpp
+	Sources/Resources/MyResources.qrc
 )
 
 # Create executable for test cases
-add_executable(TestGame
-	${PROJECT_SOURCES}
+add_executable(TestGame)
+
+target_sources(TestGame PUBLIC
+	Sources/tttGeneral.h
+	Sources/tttMatchResult.h
+	Sources/tttMatchResult.cpp
 	Tests/Test_TicTacToe/tst_testwincondition.cpp
-	Tests/TTGame_Test.cpp
-	Tests/TTGame_Test.h
 )
+
 
 # Link libraries for main application target and test cases target
 target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
@@ -49,3 +50,12 @@ set_target_properties(TicTacToe PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+set_target_properties(TicTacToe PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TicTacToe"
+)
+
+set_target_properties(TestGame PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/TestGame"
+)
+
