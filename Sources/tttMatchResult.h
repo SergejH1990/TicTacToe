@@ -7,6 +7,8 @@
 
 namespace Logic {
 
+	static constexpr int gDefaultMatrixEntry = 100;
+
 	class TTTMatchResult
 	{
 	public:

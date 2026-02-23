@@ -32,39 +32,39 @@ isXTurn(true)
 
 	// Initialize game buttons
 	{
-        fieldButtonsLayout = new QGridLayout;
+		fieldButtonsLayout = new QGridLayout;
 
-        for (int index = 0; index < (int)fieldButtons.size(); index++)
+		for (int index = 0; index < (int)fieldButtons.size(); index++)
 		{
 			QPushButton* const gameButton = new QPushButton(this);
 			gameButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-            connect(gameButton, &QPushButton::clicked, this, &TTTGame::OnFieldButtonPressed);
+			connect(gameButton, &QPushButton::clicked, this, &TTTGame::OnFieldButtonPressed);
 
-            fieldButtons[index] = gameButton;
-            fieldButtonsLayout->addWidget(gameButton, index / General::gEdgeSize, index % General::gEdgeSize);
+			fieldButtons[index] = gameButton;
+			fieldButtonsLayout->addWidget(gameButton, index / General::gEdgeSize, index % General::gEdgeSize);
 		}
 
-        mainLayout->addLayout(fieldButtonsLayout, 2);
+		mainLayout->addLayout(fieldButtonsLayout, 2);
 	}
 
 	// Initialize Game menu.
 	{
 		QVBoxLayout* const menuLayout = new QVBoxLayout;
 
-        scoreLabel = new QLabel;
+		scoreLabel = new QLabel;
 		scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
 		scoreLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(scoreLabel);
 
-        playerTurnLabel = new QLabel;
-        playerTurnLabel->setText(General::gNoPlayersTurnString);
+		playerTurnLabel = new QLabel;
+		playerTurnLabel->setText(General::gNoPlayersTurnString);
 		playerTurnLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(playerTurnLabel);
 
-        gameStateLabel = new QLabel;
-        gameStateLabel->setText(General::gGameIdleString);
-        gameStateLabel->setAlignment(Qt::AlignCenter);
-        menuLayout->addWidget(gameStateLabel);
+		gameStateLabel = new QLabel;
+		gameStateLabel->setText(General::gGameIdleString);
+		gameStateLabel->setAlignment(Qt::AlignCenter);
+		menuLayout->addWidget(gameStateLabel);
 
 		QHBoxLayout* const gameMenuLayout = new QHBoxLayout;
 		menuLayout->addLayout(gameMenuLayout);

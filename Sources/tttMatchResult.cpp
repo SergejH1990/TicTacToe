@@ -14,7 +14,7 @@ void TTTMatchResult::InitializeResultMatrix()
 	{
 		for (auto innerResultIterator = outerResultIterator->begin(); innerResultIterator < outerResultIterator->end(); innerResultIterator++)
 		{
-			*innerResultIterator = 100;
+			*innerResultIterator = gDefaultMatrixEntry;
 		}
 	}
 }

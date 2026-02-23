@@ -32,9 +32,11 @@ TestWinConditions::~TestWinConditions()
 
 void TestWinConditions::test_case_initial_condition()
 {
+
 	matchResult.InitializeResultMatrix();
 	QVERIFY(matchResult.DidPlayerWinner(General::gOPlayerWinSum) == false);
 	QVERIFY(matchResult.DidPlayerWinner(General::gXPlayerWinSum) == false);
+	QVERIFY(matchResult.DidPlayerWinner(3 * Logic::gDefaultMatrixEntry) == true);
 }
 
 QTEST_MAIN(TestWinConditions)
