@@ -11,7 +11,7 @@ namespace UI {
 	{
 		Q_OBJECT
 	public:
-		explicit TTTGameMenu(std::shared_ptr<Logic::GameState> gameState, QWidget *parent = nullptr);
+		explicit TTTGameMenu(std::shared_ptr<Logic::GameState>& gameState, QWidget *parent = nullptr);
 		virtual ~TTTGameMenu();
 
 		void ResetLabels();

@@ -9,7 +9,7 @@
 
 using namespace UI;
 
-TTTGameMenu::TTTGameMenu(std::shared_ptr<Logic::GameState> gameState, QWidget *parent) :
+TTTGameMenu::TTTGameMenu(std::shared_ptr<Logic::GameState>& gameState, QWidget *parent) :
 super(parent),
 gameStateLabel(nullptr),
 playerTurnLabel(nullptr),

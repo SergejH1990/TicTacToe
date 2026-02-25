@@ -19,8 +19,6 @@ fieldButtons()
 	constexpr QSize windowSize(1000, 800);
 	setFixedSize(windowSize);
 
-	const std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
-
 	// Initialize game buttons
 	{
 		fieldButtonsLayout = new QGridLayout;
@@ -40,7 +38,7 @@ fieldButtons()
 
 	// Initialize Game menu.
 	{
-		gameMenu = new TTTGameMenu(gameState, this);
+		gameMenu = new TTTGameMenu(matchResult.currentGameState);
 		connect(gameMenu, &TTTGameMenu::InitializeRound, this, &TTTGame::InitializeGameRound);
 		connect(this, &TTTGame::ResetGameMenuLabels, gameMenu, &TTTGameMenu::ResetLabels);
 		mainLayout->addWidget(gameMenu, 1);
@@ -49,7 +47,6 @@ fieldButtons()
 
 TTTGame::~TTTGame()
 {
-
 }
 
 void TTTGame::OnFieldButtonPressed()
@@ -113,7 +110,7 @@ void TTTGame::OnFieldButtonPressed()
 
 void TTTGame::InitializeGameRound()
 {
-	// Clear field and initialize game state.
+	// Clear field.
 	for (QPushButton* const gameButton : fieldButtons)
 	{
 		if (gameButton == nullptr)
@@ -121,6 +118,8 @@ void TTTGame::InitializeGameRound()
 
 		gameButton->setText(General::gEmptyString);
 	}
+
+	// Initialize game state
 	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
 	gameState->Turns = 0;
 	gameState->IsGameInProgress = false;
