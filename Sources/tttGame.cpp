@@ -19,16 +19,13 @@ resetButton(nullptr),
 fieldButtonsLayout(nullptr),
 mainLayout(nullptr),
 matchResult(),
-fieldButtons(),
-xWins(0),
-oWins(0),
-turns(0),
-isGameInProgress(false),
-isXTurn(true)
+fieldButtons()
 {
 	mainLayout = new QVBoxLayout(this);
 	constexpr QSize windowSize(1000, 800);
 	setFixedSize(windowSize);
+
+	const std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
 
 	// Initialize game buttons
 	{
@@ -52,7 +49,7 @@ isXTurn(true)
 		QVBoxLayout* const menuLayout = new QVBoxLayout;
 
 		scoreLabel = new QLabel;
-		scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
+		scoreLabel->setText(General::gFormatScoreString.arg(gameState->XWins).arg(gameState->OWins));
 		scoreLabel->setAlignment(Qt::AlignCenter);
 		menuLayout->addWidget(scoreLabel);
 
@@ -90,21 +87,23 @@ TTTGame::~TTTGame()
 
 void TTTGame::OnFieldButtonPressed()
 {
-	if (!isGameInProgress)
+	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
+	if (!gameState->IsGameInProgress)
 		return;
 
 	QPushButton* const fieldButton = qobject_cast<QPushButton*>(sender());
 	if (fieldButton == nullptr || fieldButton->text() != General::gEmptyString)
 		return;
 
-	turns++;
+	const bool isXTurn = gameState->IsXTurn;
+	gameState->Turns++;
 
 	// Marking field button with active player's string and checking if player has won.
 	const QString fieldButtonString = isXTurn ? General::gXPlayerString : General::gOPlayerString;
 	fieldButton->setText(fieldButtonString);
 	UpdateResultForPressedButton(*fieldButton);
 	static constexpr int kMinimumRoundsPlayed = 5;
-	const bool didWin = turns < kMinimumRoundsPlayed ? false : matchResult.DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
+	const bool didWin = gameState->Turns < kMinimumRoundsPlayed ? false : matchResult.DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
 
 	QMessageBox winMessage(this);
 	winMessage.setIcon(QMessageBox::Information);
@@ -113,28 +112,28 @@ void TTTGame::OnFieldButtonPressed()
 	{
 		if (isXTurn)
 		{
-			xWins++;
+			gameState->XWins++;
 		}
 		else
 		{
-			oWins++;
+			gameState->OWins++;
 		}
 
 		winMessage.setText(QString("Player \"%1\" has won the current round.").arg(fieldButtonString));
 		winMessage.exec();
 
 		// When a player won then the losing player should start in the next round.
-		isXTurn = !isXTurn;
+		gameState->IsXTurn = !isXTurn;
 		InitializeGameRound();
 		return;
 	}
 
-	if (turns == 9)
+	if (gameState->Turns == 9)
 	{
 		winMessage.setText("No Player has won the current round. It's a draw.");
 		winMessage.exec();
 
-		isXTurn = true;
+		gameState->IsXTurn = true;
 		InitializeGameRound();
 		return;
 	}
@@ -142,16 +141,17 @@ void TTTGame::OnFieldButtonPressed()
 	// Updating for next turn if there is no winner and more turns left.
 	const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
 	playerTurnLabel->setText(nextPlayerTurnString);
-	isXTurn = !isXTurn;
+	gameState->IsXTurn = !isXTurn;
 }
 
 void TTTGame::OnStartGamePressed()
 {
-	if (isGameInProgress)
+	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
+	if (gameState->IsGameInProgress)
 		return;
 
-	isGameInProgress = true;
-	const QString nextPlayerTurnString = isXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
+	gameState->IsGameInProgress = true;
+	const QString nextPlayerTurnString = gameState->IsXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
 
 	playerTurnLabel->setText(nextPlayerTurnString);
 	gameStateLabel->setText(General::gGameProgressString);
@@ -159,10 +159,11 @@ void TTTGame::OnStartGamePressed()
 
 void TTTGame::OnResetButtonPressed()
 {
-	xWins = 0;
-	oWins = 0;
+	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
+	gameState->XWins = 0;
+	gameState->OWins = 0;
 
-	isXTurn = true;
+	gameState->IsXTurn = true;
 	InitializeGameRound();
 }
 
@@ -176,12 +177,13 @@ void TTTGame::InitializeGameRound()
 
 		gameButton->setText(General::gEmptyString);
 	}
-	turns = 0;
-	isGameInProgress = false;
+	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
+	gameState->Turns = 0;
+	gameState->IsGameInProgress = false;
 	matchResult.InitializeResultMatrix();
 
 	// Update game labels
-	scoreLabel->setText(General::gFormatScoreString.arg(xWins).arg(oWins));
+	scoreLabel->setText(General::gFormatScoreString.arg(gameState->XWins).arg(gameState->OWins));
 	playerTurnLabel->setText(General::gNoPlayersTurnString);
 	gameStateLabel->setText(General::gGameIdleString);
 }
@@ -204,7 +206,7 @@ void TTTGame::UpdateResultForPressedButton(const QPushButton& pressedPushButton)
 			if (pushButton != &pressedPushButton)
 				continue;
 
-			const int matrixEntry = isXTurn ? General::gXPlayerWinSum / General::gEdgeSize : General::gOPlayerWinSum / General::gEdgeSize;
+			const int matrixEntry = matchResult.currentGameState->IsXTurn ? General::gXPlayerWinSum / General::gEdgeSize : General::gOPlayerWinSum / General::gEdgeSize;
 			matchResult.UpdateResultMatrix(columnIndex, rowIndex, matrixEntry);
 			break;
 		}

@@ -3,9 +3,11 @@
 using namespace Logic;
 
 TTTMatchResult::TTTMatchResult() :
+currentGameState(),
 resultMatrix()
 {
 	InitializeResultMatrix();
+	currentGameState = std::make_shared<GameState>();
 }
 
 void TTTMatchResult::InitializeResultMatrix()

@@ -2,12 +2,29 @@
 #define TTTMATCHRESULT_H
 
 #include <array>
+#include <memory>
 
 #include "tttGeneral.h"
 
 namespace Logic {
 
 	static constexpr int gDefaultMatrixEntry = 100;
+
+	struct GameState {
+		GameState():
+		XWins(0),
+		OWins(0),
+		Turns(0),
+		IsGameInProgress(false),
+		IsXTurn(true)
+		{}
+
+		int XWins; /**< Tracks the wins for Player X. */
+		int OWins; /**< Tracks the wins for Player O. */
+		int Turns; /**< Tracks the amount of turns played in the current round. */
+		bool IsGameInProgress; /**< True if a round is being played, false if a round has finished and next one is not started yet. */
+		bool IsXTurn; /**< True if it is Player X turn and false if it is Player O turn. */
+	};
 
 	class TTTMatchResult
 	{
@@ -28,6 +45,8 @@ namespace Logic {
 		 * @return true if player is a winner false otherwise.
 		 */
 		bool DidPlayerWinner(const int playerWinSum);
+
+		std::shared_ptr<GameState> currentGameState;
 
 	protected:
 		std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix; /**< Matrix which is used to track if a player has won the round. */
