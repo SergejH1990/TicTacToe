@@ -23,8 +23,8 @@ target_sources(TicTacToe PUBLIC
 	Sources/tttGeneral.h
 	Sources/tttGame.cpp
 	Sources/tttGame.h
-
-
+	Sources/tttGameMenu.cpp
+	Sources/tttGameMenu.h
 	Sources/tttMatchResult.h
 	Sources/tttMatchResult.cpp
 	Sources/Resources/MyResources.qrc

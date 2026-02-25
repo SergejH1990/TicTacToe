@@ -1,21 +1,15 @@
-#include <QPushButton>
-#include <QLabel>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QGridLayout>
 #include <QMessageBox>
 
 #include "tttGeneral.h"
+#include "tttGameMenu.h"
 
 #include "tttGame.h"
 
 using namespace UI;
 
 TTTGame::TTTGame(QWidget *parent): super(parent),
-gameStateLabel(nullptr),
-playerTurnLabel(nullptr),
-scoreLabel(nullptr),
-startButton(nullptr),
-resetButton(nullptr),
 fieldButtonsLayout(nullptr),
 mainLayout(nullptr),
 matchResult(),
@@ -46,37 +40,10 @@ fieldButtons()
 
 	// Initialize Game menu.
 	{
-		QVBoxLayout* const menuLayout = new QVBoxLayout;
-
-		scoreLabel = new QLabel;
-		scoreLabel->setText(General::gFormatScoreString.arg(gameState->XWins).arg(gameState->OWins));
-		scoreLabel->setAlignment(Qt::AlignCenter);
-		menuLayout->addWidget(scoreLabel);
-
-		playerTurnLabel = new QLabel;
-		playerTurnLabel->setText(General::gNoPlayersTurnString);
-		playerTurnLabel->setAlignment(Qt::AlignCenter);
-		menuLayout->addWidget(playerTurnLabel);
-
-		gameStateLabel = new QLabel;
-		gameStateLabel->setText(General::gGameIdleString);
-		gameStateLabel->setAlignment(Qt::AlignCenter);
-		menuLayout->addWidget(gameStateLabel);
-
-		QHBoxLayout* const gameMenuLayout = new QHBoxLayout;
-		menuLayout->addLayout(gameMenuLayout);
-
-		startButton = new QPushButton(this);
-		startButton->setText("Start");
-		connect(startButton, &QPushButton::clicked, this, &TTTGame::OnStartGamePressed);
-
-		resetButton = new QPushButton(this);
-		resetButton->setText("Reset");
-		connect(resetButton, &QPushButton::clicked, this, &TTTGame::OnResetButtonPressed);
-
-		gameMenuLayout->addWidget(startButton);
-		gameMenuLayout->addWidget(resetButton);
-		mainLayout->addLayout(menuLayout, 1);
+		gameMenu = new TTTGameMenu(gameState, this);
+		connect(gameMenu, &TTTGameMenu::InitializeRound, this, &TTTGame::InitializeGameRound);
+		connect(this, &TTTGame::ResetGameMenuLabels, gameMenu, &TTTGameMenu::ResetLabels);
+		mainLayout->addWidget(gameMenu, 1);
 	}
 }
 
@@ -140,31 +107,8 @@ void TTTGame::OnFieldButtonPressed()
 
 	// Updating for next turn if there is no winner and more turns left.
 	const QString nextPlayerTurnString = isXTurn ? General::gOPlayerTurnString : General::gXPlayerTurnString;
-	playerTurnLabel->setText(nextPlayerTurnString);
+	gameMenu->SetNextPlayerString(nextPlayerTurnString);
 	gameState->IsXTurn = !isXTurn;
-}
-
-void TTTGame::OnStartGamePressed()
-{
-	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
-	if (gameState->IsGameInProgress)
-		return;
-
-	gameState->IsGameInProgress = true;
-	const QString nextPlayerTurnString = gameState->IsXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
-
-	playerTurnLabel->setText(nextPlayerTurnString);
-	gameStateLabel->setText(General::gGameProgressString);
-}
-
-void TTTGame::OnResetButtonPressed()
-{
-	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
-	gameState->XWins = 0;
-	gameState->OWins = 0;
-
-	gameState->IsXTurn = true;
-	InitializeGameRound();
 }
 
 void TTTGame::InitializeGameRound()
@@ -183,9 +127,7 @@ void TTTGame::InitializeGameRound()
 	matchResult.InitializeResultMatrix();
 
 	// Update game labels
-	scoreLabel->setText(General::gFormatScoreString.arg(gameState->XWins).arg(gameState->OWins));
-	playerTurnLabel->setText(General::gNoPlayersTurnString);
-	gameStateLabel->setText(General::gGameIdleString);
+	emit ResetGameMenuLabels();
 }
 
 void TTTGame::UpdateResultForPressedButton(const QPushButton& pressedPushButton)
