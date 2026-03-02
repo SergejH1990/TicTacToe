@@ -12,12 +12,16 @@ using namespace UI;
 TTTGame::TTTGame(QWidget *parent): super(parent),
 fieldButtonsLayout(nullptr),
 mainLayout(nullptr),
-matchResult(),
+gameController(nullptr),
+gameState(),
 fieldButtons()
 {
 	mainLayout = new QVBoxLayout(this);
 	constexpr QSize windowSize(1000, 800);
 	setFixedSize(windowSize);
+
+	gameState = std::make_shared<Logic::TTTGameState>();
+	gameController = new Logic::TTTGameController(gameState, this);
 
 	// Initialize game buttons
 	{
@@ -38,7 +42,7 @@ fieldButtons()
 
 	// Initialize Game menu.
 	{
-		gameMenu = new TTTGameMenu(matchResult.currentGameState);
+		gameMenu = new TTTGameMenu(gameState);
 		connect(gameMenu, &TTTGameMenu::InitializeRound, this, &TTTGame::InitializeGameRound);
 		connect(this, &TTTGame::ResetGameMenuLabels, gameMenu, &TTTGameMenu::ResetLabels);
 		mainLayout->addWidget(gameMenu, 1);
@@ -51,7 +55,6 @@ TTTGame::~TTTGame()
 
 void TTTGame::OnFieldButtonPressed()
 {
-	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
 	if (!gameState->IsGameInProgress)
 		return;
 
@@ -67,7 +70,7 @@ void TTTGame::OnFieldButtonPressed()
 	fieldButton->setText(fieldButtonString);
 	UpdateResultForPressedButton(*fieldButton);
 	static constexpr int kMinimumRoundsPlayed = 5;
-	const bool didWin = gameState->Turns < kMinimumRoundsPlayed ? false : matchResult.DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
+	const bool didWin = gameState->Turns < kMinimumRoundsPlayed ? false : gameController->DidPlayerWinner(isXTurn ? General::gXPlayerWinSum : General::gOPlayerWinSum);
 
 	QMessageBox winMessage(this);
 	winMessage.setIcon(QMessageBox::Information);
@@ -120,10 +123,9 @@ void TTTGame::InitializeGameRound()
 	}
 
 	// Initialize game state
-	std::shared_ptr<Logic::GameState>& gameState = matchResult.currentGameState;
 	gameState->Turns = 0;
 	gameState->IsGameInProgress = false;
-	matchResult.InitializeResultMatrix();
+	gameController->InitializeResultMatrix();
 
 	// Update game labels
 	emit ResetGameMenuLabels();
@@ -147,8 +149,8 @@ void TTTGame::UpdateResultForPressedButton(const QPushButton& pressedPushButton)
 			if (pushButton != &pressedPushButton)
 				continue;
 
-			const int matrixEntry = matchResult.currentGameState->IsXTurn ? General::gXPlayerWinSum / General::gEdgeSize : General::gOPlayerWinSum / General::gEdgeSize;
-			matchResult.UpdateResultMatrix(columnIndex, rowIndex, matrixEntry);
+			const int matrixEntry = gameState->IsXTurn ? General::gXPlayerWinSum / General::gEdgeSize : General::gOPlayerWinSum / General::gEdgeSize;
+			gameController->UpdateResultMatrix(columnIndex, rowIndex, matrixEntry);
 			break;
 		}
 	}

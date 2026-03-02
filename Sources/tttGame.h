@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QPushButton>
 
-#include "tttMatchResult.h"
+#include "tttGameController.h"
 
 namespace UI {
 
@@ -38,7 +38,8 @@ namespace UI {
 		class QGridLayout* fieldButtonsLayout; /**< Layout which contains the buttons the players are competing against each other. */
 		class QVBoxLayout* mainLayout; /**< Layout which contains all widgets of the game. */
 
-		Logic::TTTMatchResult matchResult;
+		Logic::TTTGameController* gameController;
+		std::shared_ptr<Logic::TTTGameState> gameState;
 
 		std::array<class QPushButton*, 9> fieldButtons; /**< The buttons where the game is played. */
 

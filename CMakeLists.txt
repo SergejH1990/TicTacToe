@@ -25,8 +25,10 @@ target_sources(TicTacToe PUBLIC
 	Sources/tttGame.h
 	Sources/tttGameMenu.cpp
 	Sources/tttGameMenu.h
-	Sources/tttMatchResult.h
-	Sources/tttMatchResult.cpp
+	Sources/tttGameController.cpp
+	Sources/tttGameController.h
+	Sources/tttNetworkManager.cpp
+	Sources/tttNetworkManager.h
 	Sources/Resources/MyResources.qrc
 )
 
@@ -35,15 +37,18 @@ add_executable(TestWinCondition)
 
 target_sources(TestWinCondition PUBLIC
 	Sources/tttGeneral.h
-	Sources/tttMatchResult.h
-	Sources/tttMatchResult.cpp
+	Sources/tttGameController.h
+	Sources/tttGameController.cpp
+	Sources/tttGameController.h
+	Sources/tttNetworkManager.cpp
+	Sources/tttNetworkManager.h
 	Tests/Test_TicTacToe/tst_testwinconditions.cpp
 )
 
 
 # Link libraries for main application target and test cases target
-target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
-target_link_libraries(TestWinCondition PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test)
+target_link_libraries(TicTacToe PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(TestWinCondition PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Test Qt${QT_VERSION_MAJOR}::Network)
 
 set_target_properties(TicTacToe PROPERTIES
 	MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "tttMatchResult.h"
+#include "tttGameController.h"
 
 namespace UI {
 
@@ -11,7 +11,7 @@ namespace UI {
 	{
 		Q_OBJECT
 	public:
-		explicit TTTGameMenu(std::shared_ptr<Logic::GameState>& gameState, QWidget *parent = nullptr);
+		explicit TTTGameMenu(std::shared_ptr<Logic::TTTGameState>& gameState, QWidget *parent = nullptr);
 		virtual ~TTTGameMenu();
 
 		void ResetLabels();
@@ -40,7 +40,7 @@ namespace UI {
 		class QPushButton* startButton; /**< The button starts the game session. */
 		class QPushButton* resetButton; /**< The button resets the game session. */
 
-		std::shared_ptr<Logic::GameState> currentGameState;
+		std::shared_ptr<Logic::TTTGameState> currentGameState;
 
 	private:
 		using super = QWidget;

@@ -1,35 +1,40 @@
-#ifndef TTTMATCHRESULT_H
-#define TTTMATCHRESULT_H
+#ifndef TTTGAMECONTROLLER_H
+#define TTTGAMECONTROLLER_H
 
 #include <array>
-#include <memory>
 
 #include "tttGeneral.h"
+#include "tttNetworkManager.h"
 
 namespace Logic {
 
 	static constexpr int gDefaultMatrixEntry = 100;
 
-	struct GameState {
-		GameState():
+	struct TTTGameState {
+		TTTGameState():
 		XWins(0),
 		OWins(0),
 		Turns(0),
 		IsGameInProgress(false),
-		IsXTurn(true)
-		{}
+		IsXTurn(true),
+		resultMatrix()
+		{
+		}
 
 		int XWins; /**< Tracks the wins for Player X. */
 		int OWins; /**< Tracks the wins for Player O. */
 		int Turns; /**< Tracks the amount of turns played in the current round. */
 		bool IsGameInProgress; /**< True if a round is being played, false if a round has finished and next one is not started yet. */
 		bool IsXTurn; /**< True if it is Player X turn and false if it is Player O turn. */
+		std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix; /**< Matrix which is used to track if a player has won the round. */
 	};
 
-	class TTTMatchResult
+	class TTTGameController : public QObject
 	{
+		Q_OBJECT
 	public:
-		TTTMatchResult();
+		explicit TTTGameController(std::shared_ptr<TTTGameState>& gameState, QObject* parent = nullptr);
+		virtual ~TTTGameController();
 
 		/**
 		 * Initializes the result matrix components to the value of 100 so that the win sum for each player is unique.
@@ -46,11 +51,13 @@ namespace Logic {
 		 */
 		bool DidPlayerWinner(const int playerWinSum);
 
-		std::shared_ptr<GameState> currentGameState;
-
 	protected:
-		std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix; /**< Matrix which is used to track if a player has won the round. */
+		std::shared_ptr<TTTGameState> currentGameState;
+		Network::TTTNetworkManager* tcpNetworkManager;
+
+	private:
+		using super = QObject;
 	};
 }
 
-#endif // TTTMATCHRESULT_H
+#endif // TTTGAMECONTROLLER_H

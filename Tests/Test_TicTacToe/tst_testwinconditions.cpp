@@ -3,7 +3,7 @@
 // add necessary includes here
 
 #include "Sources/tttGeneral.h"
-#include "Sources/tttMatchResult.h"
+#include "Sources/tttGameController.h"
 
 class TestWinConditions : public QObject
 {
@@ -14,7 +14,8 @@ public:
 	~TestWinConditions();
 
 private:
-	Logic::TTTMatchResult matchResult;
+	std::shared_ptr<Logic::TTTGameState> gameState;
+	Logic::TTTGameController* gameController;
 
 private slots:
 	void test_case_initial_condition();
@@ -22,8 +23,10 @@ private slots:
 
 TestWinConditions::TestWinConditions():
 QObject(),
-matchResult()
+gameState()
 {
+	gameState = std::make_shared<Logic::TTTGameState>();
+	gameController = new Logic::TTTGameController(gameState, this);
 }
 
 TestWinConditions::~TestWinConditions()
@@ -32,11 +35,10 @@ TestWinConditions::~TestWinConditions()
 
 void TestWinConditions::test_case_initial_condition()
 {
-
-	matchResult.InitializeResultMatrix();
-	QVERIFY(matchResult.DidPlayerWinner(General::gOPlayerWinSum) == false);
-	QVERIFY(matchResult.DidPlayerWinner(General::gXPlayerWinSum) == false);
-	QVERIFY(matchResult.DidPlayerWinner(3 * Logic::gDefaultMatrixEntry) == true);
+	gameController->InitializeResultMatrix();
+	QVERIFY(gameController->DidPlayerWinner(General::gOPlayerWinSum) == false);
+	QVERIFY(gameController->DidPlayerWinner(General::gXPlayerWinSum) == false);
+	QVERIFY(gameController->DidPlayerWinner(3 * Logic::gDefaultMatrixEntry) == true);
 }
 
 QTEST_MAIN(TestWinConditions)

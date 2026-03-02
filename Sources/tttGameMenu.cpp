@@ -9,7 +9,7 @@
 
 using namespace UI;
 
-TTTGameMenu::TTTGameMenu(std::shared_ptr<Logic::GameState>& gameState, QWidget *parent) :
+TTTGameMenu::TTTGameMenu(std::shared_ptr<Logic::TTTGameState>& gameState, QWidget *parent) :
 super(parent),
 gameStateLabel(nullptr),
 playerTurnLabel(nullptr),
@@ -21,7 +21,7 @@ currentGameState(gameState)
 	QVBoxLayout* const menuLayout = new QVBoxLayout(this);
 
 	scoreLabel = new QLabel;
-	scoreLabel->setText(General::gFormatScoreString.arg(gameState->XWins).arg(gameState->OWins));
+	scoreLabel->setText(General::gFormatScoreString.arg(currentGameState->XWins).arg(currentGameState->OWins));
 	scoreLabel->setAlignment(Qt::AlignCenter);
 	menuLayout->addWidget(scoreLabel);
 
@@ -69,12 +69,11 @@ void TTTGameMenu::SetNextPlayerString(const QString& nextPlayerString)
 
 void TTTGameMenu::OnStartGamePressed()
 {
-	std::shared_ptr<Logic::GameState>& gameState = currentGameState;
-	if (gameState->IsGameInProgress)
+	if (currentGameState->IsGameInProgress)
 		return;
 
-	gameState->IsGameInProgress = true;
-	const QString nextPlayerTurnString = gameState->IsXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
+	currentGameState->IsGameInProgress = true;
+	const QString nextPlayerTurnString = currentGameState->IsXTurn ? General::gXPlayerTurnString : General::gOPlayerTurnString;
 
 	playerTurnLabel->setText(nextPlayerTurnString);
 	gameStateLabel->setText(General::gGameProgressString);
@@ -82,10 +81,9 @@ void TTTGameMenu::OnStartGamePressed()
 
 void TTTGameMenu::OnResetButtonPressed()
 {
-	std::shared_ptr<Logic::GameState>& gameState = currentGameState;
-	gameState->XWins = 0;
-	gameState->OWins = 0;
+	currentGameState->XWins = 0;
+	currentGameState->OWins = 0;
 
-	gameState->IsXTurn = true;
+	currentGameState->IsXTurn = true;
 	emit InitializeRound();
 }
