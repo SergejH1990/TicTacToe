@@ -18,7 +18,7 @@ TTTGameController::~TTTGameController()
 
 void TTTGameController::InitializeResultMatrix()
 {
-	for (auto outerResultIterator = currentGameState->resultMatrix.begin(); outerResultIterator < currentGameState->resultMatrix.end(); outerResultIterator++)
+	for (auto outerResultIterator = currentGameState->ResultMatrix.begin(); outerResultIterator < currentGameState->ResultMatrix.end(); outerResultIterator++)
 	{
 		for (auto innerResultIterator = outerResultIterator->begin(); innerResultIterator < outerResultIterator->end(); innerResultIterator++)
 		{
@@ -29,7 +29,7 @@ void TTTGameController::InitializeResultMatrix()
 
 void TTTGameController::UpdateResultMatrix(const int column, const int row, const int matrixEntry)
 {
-	currentGameState->resultMatrix[column][row] = matrixEntry;
+	currentGameState->ResultMatrix[column][row] = matrixEntry;
 }
 
 bool TTTGameController::DidPlayerWinner(const int playerWinSum)
@@ -44,7 +44,7 @@ bool TTTGameController::DidPlayerWinner(const int playerWinSum)
 	int sumColumn3 = 0;
 
 	// Create sums for all rows, columns and diagonals
-	auto& matrix = currentGameState->resultMatrix;
+	auto& matrix = currentGameState->ResultMatrix;
 	for (int index = 0; index < General::gEdgeSize; index++)
 	{
 		sumDiagonal1 += matrix[index][index];

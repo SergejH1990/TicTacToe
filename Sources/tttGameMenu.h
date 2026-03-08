@@ -14,11 +14,22 @@ namespace UI {
 		explicit TTTGameMenu(std::shared_ptr<Logic::TTTGameState>& gameState, QWidget *parent = nullptr);
 		virtual ~TTTGameMenu();
 
+		/**
+		 * Resets the labels of the menu to the default state.
+		 */
 		void ResetLabels();
 
+		/**
+		 * Set the string of the player turn label to \p nextPlayerString
+		 *
+		 * @param nextPlayerString the string the player turn label is displaying.
+		 */
 		void SetNextPlayerString(const QString& nextPlayerString);
 
 	signals:
+		/**
+		 * Signal used to tell the game window that the next round needs to be loaded because of a reset.
+		 */
 		void InitializeRound();
 
 	protected:
@@ -40,7 +51,7 @@ namespace UI {
 		class QPushButton* startButton; /**< The button starts the game session. */
 		class QPushButton* resetButton; /**< The button resets the game session. */
 
-		std::shared_ptr<Logic::TTTGameState> currentGameState;
+		std::shared_ptr<Logic::TTTGameState> currentGameState; /**< Holds the current game state. */
 
 	private:
 		using super = QWidget;

@@ -17,9 +17,12 @@ gameSocket(nullptr)
 	{
 		qDebug() << "Connected Socket";
 	}
+	else
+	{
+		qDebug() << "Connected Failed";
+	}
 }
 
 TTTNetworkManager::~TTTNetworkManager()
 {
-
 }

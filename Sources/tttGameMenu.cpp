@@ -52,7 +52,6 @@ currentGameState(gameState)
 
 TTTGameMenu::~TTTGameMenu()
 {
-
 }
 
 void TTTGameMenu::ResetLabels()

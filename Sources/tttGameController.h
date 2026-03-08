@@ -8,7 +8,7 @@
 
 namespace Logic {
 
-	static constexpr int gDefaultMatrixEntry = 100;
+	static constexpr int gDefaultMatrixEntry = 100; /**< The value given to all matrix entries that were not updated by a player yet. */
 
 	struct TTTGameState {
 		TTTGameState():
@@ -17,7 +17,7 @@ namespace Logic {
 		Turns(0),
 		IsGameInProgress(false),
 		IsXTurn(true),
-		resultMatrix()
+		ResultMatrix()
 		{
 		}
 
@@ -26,7 +26,7 @@ namespace Logic {
 		int Turns; /**< Tracks the amount of turns played in the current round. */
 		bool IsGameInProgress; /**< True if a round is being played, false if a round has finished and next one is not started yet. */
 		bool IsXTurn; /**< True if it is Player X turn and false if it is Player O turn. */
-		std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> resultMatrix; /**< Matrix which is used to track if a player has won the round. */
+		std::array<std::array<int, General::gEdgeSize>, General::gEdgeSize> ResultMatrix; /**< Matrix which is used to track if a player has won the round. */
 	};
 
 	class TTTGameController : public QObject
@@ -41,6 +41,13 @@ namespace Logic {
 		 */
 		void InitializeResultMatrix();
 
+		/**
+		 * Updates the result matrix at the column and row with the matrix entry value.
+		 *
+		 * @param column the column of the result matrix.
+		 * @param row the row of the result matrix.
+		 * @param matrixEntry the value the matrix will take at the column and row.
+		 */
 		void UpdateResultMatrix(const int column, const int row, const int matrixEntry);
 
 		/**
@@ -52,8 +59,8 @@ namespace Logic {
 		bool DidPlayerWinner(const int playerWinSum);
 
 	protected:
-		std::shared_ptr<TTTGameState> currentGameState;
-		Network::TTTNetworkManager* tcpNetworkManager;
+		std::shared_ptr<TTTGameState> currentGameState; /**< Holds the current game state of the game. */
+		Network::TTTNetworkManager* tcpNetworkManager;	/**< The network manager in charge of communication of the players when being remote. */
 
 	private:
 		using super = QObject;
